@@ -356,6 +356,7 @@ ideal idSect (ideal h1,ideal h2, GbVariant alg)
   ring syz_ring=rAssure_SyzOrder(orig_ring,TRUE);
   rSetSyzComp(length,syz_ring);
   rChangeCurrRing(syz_ring);
+  si_opt_1 |= Sy_bit(OPT_REDTAIL_SYZ);
 
   while ((j>0) && (first->m[j-1]==NULL)) j--;
   temp = idInit(j /*IDELEMS(first)*/+IDELEMS(second),length+j);

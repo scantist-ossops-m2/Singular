@@ -195,6 +195,7 @@ Short/hres_s.tst
 Short/imap.tst
 Short/intdet_s.tst
 Short/intersect_s.tst
+Short/intersect_q.tst
 Short/invar.tst
 Short/invarlib.tst
 Short/janet.tst
