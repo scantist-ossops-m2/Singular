@@ -2875,10 +2875,10 @@ ring rModifyRing(ring r, BOOLEAN omit_degree,
     return r;
   }
   ring res=(ring)omAllocBin(sip_sring_bin);
-  *res = *r;
+  *res = *r; // includes r->options
 
 #ifdef HAVE_PLURAL
-  res->GetNC() = NULL;
+  res->GetNC() = NULL;// to re-create it
 #endif
 
   // res->qideal, res->idroot ???
@@ -3091,6 +3091,7 @@ ring rModifyRing_Simple(ring r, BOOLEAN ommit_degree, BOOLEAN ommit_comp, unsign
 
 void rKillModifiedRing(ring r)
 {
+  r->qideal=NULL;r->idroot=NULL; // was taken from original
   rUnComplete(r);
   omFree(r->order);
   omFree(r->block0);
