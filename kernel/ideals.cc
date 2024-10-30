@@ -504,6 +504,10 @@ ideal idMultSect(resolvente arg, int length, GbVariant alg)
   j += maxrk;
   syzComp = k*maxrk;
 
+  BITSET save_opt;
+  SI_SAVE_OPT1(save_opt);
+  si_opt_1 |= Sy_bit(OPT_REDTAIL_SYZ);
+
   ring orig_ring=currRing;
   ring syz_ring=rAssure_SyzOrder(orig_ring,TRUE);
   rSetSyzComp(syzComp,syz_ring);
@@ -583,6 +587,7 @@ ideal idMultSect(resolvente arg, int length, GbVariant alg)
     rChangeCurrRing(orig_ring);
     rDelete(syz_ring);
   }
+  SI_RESTORE_OPT1(save_opt);
   idSkipZeroes(result);
   return result;
 }
