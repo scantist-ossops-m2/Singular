@@ -2919,7 +2919,7 @@ ring rCompose(const lists  L, const BOOLEAN check_comp, const long bitmask,const
   if (L->m[3].Typ()==IDEAL_CMD)
   {
     ideal q=(ideal)L->m[3].Data();
-    if (q->m[0]!=NULL)
+    if ((q!=NULL) && (q->m!=NULL) && (q->m[0]!=NULL))
     {
       if (R->cf != currRing->cf) //->cf->ch!=currRing->cf->ch)
       {
