@@ -28,4 +28,6 @@ void singular_close_links();
 // for use in kstdhelper
 ideal ssiReadIdeal(ssiInfo *d);
 void ssiWriteIdeal(const ssiInfo *d, int typ,const ideal I);
+int ssiReadInt(const ssiInfo *d);
+void ssiWriteInt(const ssiInfo *d,const int i);
 #endif

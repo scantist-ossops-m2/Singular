@@ -151,7 +151,7 @@ static void ssiCheckCurrRing(const ring r)
   assume((currRing==r) || rEqual(r,currRing));
 }
 // the implementation of the functions:
-static void ssiWriteInt(const ssiInfo *d,const int i)
+void ssiWriteInt(const ssiInfo *d,const int i)
 {
   fprintf(d->f_write,"%d ",i);
   //if (d->f_debug!=NULL) fprintf(d->f_debug,"int: %d ",i);
@@ -500,9 +500,9 @@ static char *ssiReadString(const ssiInfo *d)
   return buf;
 }
 
-static int ssiReadInt(s_buff fich)
+int ssiReadInt(const ssiInfo *d)
 {
-  return s_readint(fich);
+  return s_readint(d->f_read);
 }
 
 static number ssiReadNumber_CF(const ssiInfo *d, const coeffs cf)
@@ -718,7 +718,7 @@ static poly ssiReadPoly_R(const ssiInfo *d, const ring r)
 {
 // < # of terms> < term1> < .....
   int n,i,l;
-  n=ssiReadInt(d->f_read); // # of terms
+  n=ssiReadInt(d); // # of terms
   //Print("poly: terms:%d\n",n);
   poly p;
   poly ret=NULL;
@@ -1059,7 +1059,7 @@ BOOLEAN ssiOpen(si_link l, short flag, leftv u)
           sigemptyset(&sigint);
           sigaddset(&sigint, SIGINT);
           sigprocmask(SIG_BLOCK, &sigint, NULL);
-	  si_set_signal(SIGTERM,sig_term_hdl);
+          si_set_signal(SIGTERM,sig_term_hdl);
           /* set #cpu to 1 for the child:*/
           feSetOptValue(FE_OPT_CPUS,1);
 
@@ -1480,7 +1480,7 @@ BOOLEAN ssiClose(si_link l)
             t.tv_sec=1;
             t.tv_nsec=0; // <=1000 ms
             nanosleep(&t, &rem);
-	    si_waitpid(d->pid,NULL,WNOHANG);
+            si_waitpid(d->pid,NULL,WNOHANG);
           }
         }
       }
@@ -1527,7 +1527,7 @@ leftv ssiRead1(si_link l)
   switch(t)
   {
     case 1:res->rtyp=INT_CMD;
-           res->data=(char *)(long)ssiReadInt(d->f_read);
+           res->data=(char *)(long)ssiReadInt(d);
            //Print("int: %d\n",(int)(long)res->data);
            break;
     case 2:res->rtyp=STRING_CMD;
