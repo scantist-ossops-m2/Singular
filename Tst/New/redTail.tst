@@ -18,13 +18,12 @@ proc T()
  option();
  ring r;
  option();
- def I = std(maxideal(1));
+ ideal I = std(maxideal(1));
  option ();
  ring rr = 0,(x, y, z), ds;
  option();
- def I = std(maxideal(1));
+ ideal I = std(maxideal(1));
  option ();
-
 }
 
 option();

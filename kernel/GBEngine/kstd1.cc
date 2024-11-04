@@ -2624,7 +2624,8 @@ ideal kStd(ideal F, ideal Q, tHomog h,intvec ** w, bigintmat *hilb,int syzComp,
     /* test HC precomputation*/
     if( rField_is_Q(currRing)
     && (!rHasGlobalOrdering(currRing))
-    && (rOrd_is_ds(currRing)||rOrd_is_Ds(currRing)))
+    && (rOrd_is_ds(currRing)||rOrd_is_Ds(currRing))
+    && (!idIsMonomial(F)))
     {
       currRing->ppNoether=kTryHC(F,Q);
       ideal res=kStd_internal(F,Q,h,w,hilb,syzComp,newIdeal,vw,sp);
@@ -2635,7 +2636,8 @@ ideal kStd(ideal F, ideal Q, tHomog h,intvec ** w, bigintmat *hilb,int syzComp,
     /* test hilbstd */
     if ( rHasGlobalOrdering(currRing)
     && rField_is_Q(currRing)
-    && ((currRing->order[0]==ringorder_M)|| currRing->LexOrder))
+    && ((currRing->order[0]==ringorder_M)|| currRing->LexOrder)
+    && (!idIsMonomial(F)))
     {
       ideal result=kTryHilbstd(F,Q);
       //ideal result=kTryHilbstd_par(F,Q,h,w);
