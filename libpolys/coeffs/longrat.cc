@@ -3345,7 +3345,7 @@ void nlWriteFd(number n, const ssiInfo* d, const coeffs)
   else if (n->s<2)
   {
     //gmp_fprintf(f,"%d %Zd %Zd ",n->s,n->z,n->n);
-    fprintf(d->f_write,"%d ",n->s+5);
+    fprintf(d->f_write,"%d ",n->s+5); // 5 or 6
     mpz_out_str (d->f_write,SSI_BASE, n->z);
     fputc(' ',d->f_write);
     mpz_out_str (d->f_write,SSI_BASE, n->n);
@@ -3394,11 +3394,7 @@ number nlReadFd(const ssiInfo *d, const coeffs)
      case 4:
        {
          LONG dd=s_readlong(d->f_read);
-         //#if SIZEOF_LONG == 8
          return INT_TO_SR(dd);
-         //#else
-         //return nlInit(dd,NULL);
-         //#endif
        }
      case 5:
      case 6:
