@@ -14,6 +14,7 @@
 
 #include "reporter/s_buff.h"
 #include "reporter/si_signals.h"
+#include "reporter/reporter.h"
 
 //struct s_buff_s
 //{
@@ -238,7 +239,7 @@ void s_readmpz_base(s_buff F, mpz_ptr a, int base)
       s_ungetc(c,F);
       break;
     }
-    if (str_p>=str_l)
+    if (str_p>=str_l-1)
     {
       int old_str_l=str_l;
       str_l=str_l*2;
@@ -247,7 +248,7 @@ void s_readmpz_base(s_buff F, mpz_ptr a, int base)
     }
     c=s_getc(F);
   }
-  mpz_set_str(a,str,base);
+  if(mpz_set_str(a,str,base)!=0) WerrorS("wrong mpz number");
   omFreeSize(str,str_l);
   if (neg==-1) mpz_neg(a,a);
 }
