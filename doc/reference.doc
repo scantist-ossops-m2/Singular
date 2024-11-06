@@ -6603,6 +6603,8 @@ consider only the leading term and do no tail reduction.
 tail reduction:n the local/mixed ordering case: reduce also with bad ecart
 @item 4
 reduce without division, return possibly a non-zero constant multiple of the remainder
+@item 8
+divide f by a approciate unit 1/(1+..) in reduce(f,I)
 @end itemize
 @*If a second argument @code{u} of type poly or matrix is given, the first argument @code{p} is replaced by @code{p/u}.
 This works only for zero dimensional ideals (resp.@: modules) in the third argument and gives, even in a local ring, a reduced normal form which is the projection to the quotient by the ideal (resp.@: module).

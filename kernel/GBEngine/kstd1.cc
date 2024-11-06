@@ -982,7 +982,7 @@ static poly redMoraNF (poly h,kStrategy strat, int flag)
   int z = 10;
   int o = H.SetpFDeg();
   H.ecart = currRing->pLDeg(H.p,&H.length,currRing)-o;
-  if ((flag & 2) == 0) cancelunit(&H,TRUE);
+  if ((flag & (KSTD_NF_ECART|KSTD_NF_CANCELUNIT)) == KSTD_NF_CANCELUNIT) cancelunit(&H,TRUE);
   H.sev = pGetShortExpVector(H.p);
   loop
   {
@@ -2213,11 +2213,11 @@ poly kNF1 (ideal F,ideal Q,poly q, kStrategy strat, int lazyReduce)
   if (BVERBOSE(23)) kDebugPrint(strat);
   if(rField_is_Ring(currRing))
   {
-    if (p!=NULL) p = redMoraNFRing(p,strat, lazyReduce & KSTD_NF_ECART);
+    if (p!=NULL) p = redMoraNFRing(p,strat, lazyReduce & (KSTD_NF_ECART|KSTD_NF_CANCELUNIT));
   }
   else
   {
-    if (p!=NULL) p = redMoraNF(p,strat, lazyReduce & KSTD_NF_ECART);
+    if (p!=NULL) p = redMoraNF(p,strat, lazyReduce & (KSTD_NF_ECART|KSTD_NF_CANCELUNIT));
   }
   if ((p!=NULL)&&((lazyReduce & KSTD_NF_LAZY)==0))
   {

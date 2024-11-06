@@ -3949,7 +3949,9 @@ poly kNF2 (ideal F,ideal Q,poly q,kStrategy strat, int lazyReduce)
   // do only a reduction of the leading term
 //#define KSTD_NF_NONORM 4
   // only global: avoid normalization, return a multiply of NF
-//#define KSTD_NF_NOLF   8
+//#define KSTD_NF_CANCELUNIT 8
+  // apply cancelunit to f inf NF(f,I)
+//#define KSTD_NF_NOLF   4096
   // avoid PrintLn with OPT_PROT
 
   poly   p;
