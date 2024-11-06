@@ -696,10 +696,10 @@ char* nEati(char *s, long *i, int m)
       if ((m!=0) && (ii > (LONG_MAX / 10))) ii = ii % m;
     }
     while (((*s) >= '0') && ((*s) <= '9'));
-    if ((m!=0) && (ii>=(long)m)) ii=ii%m;
+    if ((m!=0) && (ii>=(unsigned long)m)) ii=ii%(unsigned long)m;
     *i=ii;
   }
-  else (*i) = 1;
+  else (*i) = 1L;
   return s;
 }
 
