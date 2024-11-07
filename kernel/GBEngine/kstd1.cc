@@ -2636,7 +2636,10 @@ ideal kStd(ideal F, ideal Q, tHomog h,intvec ** w, bigintmat *hilb,int syzComp,
     /* test hilbstd */
     if ( rHasGlobalOrdering(currRing)
     && rField_is_Q(currRing)
-    && ((currRing->order[0]==ringorder_M)|| currRing->LexOrder)
+    && (!TEST_OPT_RETURN_SB)
+    && ((currRing->order[0]==ringorder_M)
+         || currRing->LexOrder
+         || rHasBlockOrder(currRing))
     && (!idIsMonomial(F)))
     {
       ideal result=kTryHilbstd(F,Q);
