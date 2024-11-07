@@ -1918,6 +1918,26 @@ BOOLEAN rHasSimpleOrder(const ring r)
   return TRUE;
 }
 
+BOOLEAN rHasBlockOrder(const ring r)
+{
+  int blocks = rBlocks(r) - 1;
+  if (blocks <= 1) return FALSE;
+
+  int s=0;
+  if ((r->order[0] == ringorder_c)
+  || (r->order[s] == ringorder_C)) s=1;
+
+  if ((r->block0[s]!=1)||(r->block1[s]!=r->N))
+    return TRUE;
+  if ((r->order[s] == ringorder_aa)
+  || (r->order[s] == ringorder_lp)
+  || (r->order[s] == ringorder_rp)
+  || (r->order[s] == ringorder_ls)
+  || (r->order[s] == ringorder_rs))
+    return TRUE;
+  return FALSE;
+}
+
 // returns TRUE, if simple lp or ls ordering
 BOOLEAN rHasSimpleLexOrder(const ring r)
 {
@@ -2032,8 +2052,8 @@ BOOLEAN rOrd_is_dp(const ring r)
   if ((r->order[0]==ringorder_C)||(r->order[0]==ringorder_c)) ord=1;
   return ((rVar(r) > 1) &&
            (r->order[ord]==ringorder_dp)
-	   &&(r->block0[ord]==1)
-	   &&(r->block1[ord]==r->N));
+           &&(r->block0[ord]==1)
+           &&(r->block1[ord]==r->N));
 }
 
 BOOLEAN rOrd_is_ds(const ring r)
@@ -2042,8 +2062,8 @@ BOOLEAN rOrd_is_ds(const ring r)
   if ((r->order[0]==ringorder_C)||(r->order[0]==ringorder_c)) ord=1;
   return ((rVar(r) > 1) &&
            (r->order[ord]==ringorder_ds)
-	   &&(r->block0[ord]==1)
-	   &&(r->block1[ord]==r->N));
+           &&(r->block0[ord]==1)
+           &&(r->block1[ord]==r->N));
 }
 
 BOOLEAN rOrd_is_Ds(const ring r)
@@ -2052,8 +2072,8 @@ BOOLEAN rOrd_is_Ds(const ring r)
   if ((r->order[0]==ringorder_C)||(r->order[0]==ringorder_c)) ord=1;
   return ((rVar(r) > 1) &&
            (r->order[ord]==ringorder_Ds)
-	   &&(r->block0[ord]==1)
-	   &&(r->block1[ord]==r->N));
+           &&(r->block0[ord]==1)
+           &&(r->block1[ord]==r->N));
 }
 
 // return TRUE if p->exp[r->pOrdIndex] holds a weighted degree of p */

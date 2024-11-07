@@ -757,6 +757,7 @@ int rGetMaxSyzComp(int i, const ring r);
 
 BOOLEAN rHasSimpleOrder(const ring r);
 BOOLEAN rHas_c_Ordering(const ring r);
+BOOLEAN rHasBlockOrder(const ring r);
 
 /// returns TRUE, if simple lp or ls ordering
 BOOLEAN rHasSimpleLexOrder(const ring r);
