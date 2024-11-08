@@ -43,7 +43,6 @@ SEE ALSO: realclassify_lib, classify_lib, classify2_lib, arnoldclassify_lib
 
 PROCEDURES:
 poshull(L); determine the convex hull of a list of monomials in mon[x,y]
-facetsAsCones(c); return the facets of a cone
 monomials(f); determine the set of monomials of a polynomial
 coeff(f,m); determine the coefficient of a given monomial of a polynomial
 newtonPolygon(poly f); determine the Newton polygon of the points corresponding to the monomials of a polynomial
@@ -59,10 +58,17 @@ piecewiseJet(f,w,d); determine the piecewise jet of a given polynomial of a give
 regularBasis(F,n); determine a regular basis for a polynomial with respect to the piecewise weight defined by its Newton polygon
 determineNormalForm(F); determine a normal form, modality, milnor number, delta invariant, number of branches, determinacy bound and corank @*
 of a given polynomial, if possible
+normalForm(F); determine a normalform for F.value, if F is of type Poly, or return F.normalForm
+determineExceptionalHypersurface(N); determine the exceptional hypersurface of the normalform stored in N.normalForm, and store the calculated hypersurface in the field N.exceptionalHypersurface
+exceptionalHypersurface(N); return N.exceptionalHypersurface
 determineNormalFormEquation(N); determine a normalform equation of a polynomial in the give normalform
+normalFormEquation(N); return N.normalFormEquation
+normalFormEquationUpToRescaling(N); N.normalFormEquationUpToRescaling, a germ which is right-equivalent to N.normalFormEquation, by the transformation x-->ax, y-->by, a,b complex numbers, such
+that its ring is minimal
 nondegeneratePart(N); determine the nondegenrate part of a singularity
 germWithNNB(N); determine a germ with a nondegenrate Newton boundary that is equivalent to a given polynomial, if possible
-germWithNormalizedNNB(N); determine a germ with a nondegenerate normalized Newton boundary, up to scalar multiplication of each of its variables,@* 
+determineGermWithSemiNormalizedNNB(N); determine a germ with a normalized nondegenerate Newton boundary that is equivalent to N.phi.sourcegerm.value
+germWithSemiNormalizedNNB(N); return a germ with a nondegenerate normalized Newton boundary, up to scalar multiplication of each of its variables,@* 
 of a given polynomial, if possibles
 modalityNNB(f); determine the modality of the singularity defined by a polynomial,if the polynomial is right equivalent to a germ with @*
 a nondegenerate Newton boundary
@@ -71,6 +77,8 @@ determinacyBound(f); determine an upper bound for the determinacy of a polynomia
 deltaNNB(f); determine the Delta invariant and number of branches of a polynomial that is right equivalent to a germ @*
 with a nondegenerate Newton boundary
 moduliMonomials(N); give the monomials corresponding to the moduli terms in a given normal form
+determineArnoldType(N); determine the Arnold classification of N.phi.sourcegerm and store it in the field N.ArnoldType 
+ArnoldType(N); return the Arnold type of N.phi.sourcegerm.value
 newtonNumber(F); determine the Newton number of a polynomial in Q[x,y]
 transformationsBeforeSplit(N); the transformations (and in some cases their inverses) that was transformed on a given polynomial to write it as a direct sum @*
 of its degenerate and nondegenerate parts, given up to filtration d, where d is a determinacy bound for the given polynomial
@@ -98,9 +106,8 @@ LIB "transformation.lib";
 
 static proc mod_init()
 {
-  newstruct("List","ring in,number newFromOld, list values");
+  newstruct("List","ring in, number newFromOld, list values");
 }
-
 
 proc poshull(list L)
 "USAGE: poshull(L); L list
@@ -226,8 +233,8 @@ EXAMPLE: example newtonPolygon, shows an example"
   }
   E[size(M)+1]=intvec(1,0,0);
   E[size(M)+2]=intvec(0,1,0);
-  cone c = poshull(E);
-  list F=facetsAsCones(c);
+  cone cc = poshull(E);
+  list F=facetsAsCones(cc);
   list F1;
   list ry;
   int r=1;
@@ -523,7 +530,8 @@ RETURN: if F.value is right equivalent to a germ with a nondegenerate Newton bou
         @*
         N.singularityType: the corner points of the Newton boundary of the normal form of F.value, which classifies the singularity type (given as type string)@*
         @*
-        N.parameters: the monomials corresponding to the moduli terms in N.normalForm (given as a list with entries of type poly)@*
+        N.parameters: the monomials corresponding to the moduli terms in N.normalForm @*
+        (given as a list with entries of type Poly over the ring N.phi.targetgerm.in)@*
         @*
         N.corank: the corank of the singularity defined by F.value (given as type int)@*
         @*
@@ -542,7 +550,7 @@ RETURN: if F.value is right equivalent to a germ with a nondegenerate Newton bou
         N.nonNormalizedNNBGerm: a polynomial that is stable equivalent to F.value with a nondegenerate Newton boundary @*
         (that is not necessarily normalized, given as type Poly)@*
         @*
-        N.normalizedNNBGerm: a polynomial that is stable equivalent to F.value with a normalized nondegenerate Newton boundary up to scalar multiplication @*
+        N.semiNormalizedNNBGerm: a polynomial that is stable equivalent to F.value with a normalized nondegenerate Newton boundary up to scalar multiplication @*
         of each of its variables (given as type Poly)@*
         @*
         N.phiBeforeMorseSplit: the transformations (and in some cases their inverses) of the transformations that was transformed on F.value to write F.value @*
@@ -557,25 +565,37 @@ RETURN: if F.value is right equivalent to a germ with a nondegenerate Newton bou
 an ERROR message otherwise
 EXAMPLE: example determineNormalForm, shows an example"
 {
-  def R = basering;
+  def B = basering;
+  def R = F.in;
+  setring R;
+  poly f = F.value;
+  if(ord(f)<2)
+  {
+    ERROR("The input Polynomial is not in m^2.")
+  }
   RightEquivalenceChainWithPrecision Tr;
   RightEquivalenceChainWithPrecision TrMorse;
   NormalForm N;
   poly ff=0;
   Poly FF = makePoly(ff);
-  N.normalizedNNBGerm =FF;
+  N.semiNormalizedNNBGerm =FF;
+  N.normalFormEquation=FF;
+  N.normalFormEquationUpToRescaling=FF;
   poly h1=0;
   Poly H1 = makePoly(h1);
   N.extension1 = H1;
   poly h2=0;
   Poly H2 = makePoly(h2);
+  poly eh = -1;
+  Poly EH =makePoly(eh);
+  N.exceptionalHypersurface=EH;
   N.extension2 = H2;
   N.inputRing =F.in;
   N.numbervars = nvars(F.in);
   list L;
   Tr.sourcegerm = F;
   Tr.targetgerm = F;
-  L = classifyNB(Tr,1,0);
+  L = classifyNB(Tr,1,0,1);
   if(L[1]==-1){ERROR("The input polynomial is degenerate, that is, has infinite milnornumber.");return(N);}
   N.milnorNumber = L[1];
   Tr = L[2];
@@ -620,13 +640,13 @@ EXAMPLE: example determineNormalForm, shows an example"
     if(L[3]<>0)
     {
       N.nonNormalizedNNBGerm=P;
-      N.normalizedNNBGerm = P;
+      N.semiNormalizedNNBGerm = P;
     }
     else
     {
       Poly J = makePoly(0);
       N.nonNormalizedNNBGerm=J;
-      N.normalizedNNBGerm = J;
+      N.semiNormalizedNNBGerm = J;
     }
   }
   TrMorse = L[5];
@@ -642,6 +662,7 @@ EXAMPLE: example determineNormalForm, shows an example"
   {
     list RB;
   }
+  int sRB = size(RB);
   N.determinacy = Tr.precision;
   if(L[3]<>0 && L[3]<>1)
   {
@@ -657,9 +678,23 @@ EXAMPLE: example determineNormalForm, shows an example"
       if(b<c)
       {
         map phi = S,var(2),var(1);
-        poly p = P.value;
-        P.value = phi(p);
-        Tr.targetgerm=P;
+        poly p = Tr.targetgerm.value;
+        Tr.targetgerm.value = phi(p);
+        N.nonNormalizedNNBGerm=Tr.targetgerm;
+        PolynomialRightEquivalence RE;
+        RE.in=basering;
+        RE.images = list(makePoly(var(2)),makePoly(var(1)));
+        Tr.transformations[size(Tr.transformations)+1]=RE;
+
+        poly f = P.value;
+        f=phi(f);
+        P.value=f;
+        poly rbp;
+        for(int i=1;i<=size(RB);i++)
+        {
+          rbp=RB[i];
+          RB[i]=phi(rbp);
+        }
         NB = newtonPolygon(P.value);
         break;
       }
@@ -678,7 +713,14 @@ EXAMPLE: example determineNormalForm, shows an example"
      setring K;
      poly f;
      list M=fetch(S,M);
-     list RB = fetch(S,RB);
+     if(sRB<>0)
+     {
+      list RB = fetch(S,RB);
+     }
+     else
+     {
+      list RB;
+     }
      list SM = setminus(M,RB);
      for(int i=1;i<=size(SM);i++)
      {
@@ -694,7 +736,9 @@ EXAMPLE: example determineNormalForm, shows an example"
   }
   else
   {
-    N.singularityType = "A["+string(L[1])+"]";
+    N.singularityType = "("+string(L[1])+")";
+    setring P.in;
+    P.value = leadmonom(P.value);
     N.normalForm =P;
     setring R;
   }
@@ -709,22 +753,29 @@ EXAMPLE: example determineNormalForm, shows an example"
     N.delta =  L[1];
     N.numberOfBranches =1;
   }
+  setring S;
   if(L[3]<>0 && L[3]<>1)
   {
-    list RB = fetch(S,RB);
+    for(int i = 1;i<=size(RB);i++)
+    {
+      RB[i]=makePoly(RB[i]);
+    }
+    N.parameters = RB;
   }
   else
   {
     list RB;
+    N.parameters = RB;
   }
-  N.modality=size(RB);
-  N.parameters = RB;
+  int n = size(RB);
+  setring R;
+  N.modality=n;
   poly g=0;
   Poly G = makePoly(g);
   G.value = g;
   N.normalFormEquation = G;
   N.phi=Tr;
-  setring R;
+  setring B;
   return(N);
 }
 example
@@ -734,12 +785,174 @@ example
  poly g = (x^2+y^2)^2+5*x^(10)+y^(11)+z^2;
  poly phix = x+y^2+x^2+x*y+x^2*y+x*y^3;
  poly phiy = y+y^2+2*x^2+x*y+y*x^2+y^2*x+x*y^4;
- poly phiz = z+2x+x^2+y^4*x;
+ poly phiz = z+2*x+x^2+y^4*x;
  map phi = R,phix,phiy,phiz;
  g = phi(g);
  Poly F = makePoly(g);
  determineNormalForm(F);
 }
+
+proc normalForm(def F)
+"USAGE: normalForm(F); F Poly or F NormalForm which can be computed using @ref(determineNormalForm)
+RETURN:  the normalform of F.value or N.normalForm
+EXAMPLE: example normalForm, shows an example"
+{
+  def S = basering;
+  NormalForm N;
+  if(typeof(F)=="Poly")
+  {
+    N= determineNormalForm(F);
+  }
+  if(typeof(F)=="NormalForm")
+  {
+    N=F;
+  }
+  Poly G = N.normalForm;
+  setring S;
+  return(G);
+}
+example
+{
+ "EXAMPLE:"; echo=2;
+ ring R = 0,(x,y,z),ds;
+ poly g = (x^2+y^2)^2+5*x^(10)+y^(11)+z^2;
+ g = x^2*y^4+y^2*x^4+5*x^(10)+y^(11)+x^4*y^3+z^2;
+ poly phix = x+y^2+x^2+x*y+x^2*y+x*y^3;
+ poly phiy = y+y^2+2*x^2+x*y+y*x^2+y^2*x+x*y^4;
+ poly phiz = z+2*x+x^2+y^4*x;
+ map phi = R,phix,phiy,phiz;
+ g = phi(g);
+ Poly F = makePoly(g);
+ NormalForm N;
+ N=determineNormalForm(F);
+ normalForm(F);
+ normalForm(N);
+}
+
+proc determineExceptionalHypersurface(NormalForm N)
+"USAGE: determineExceptionalHypersurface(N); N a NormalForm as given by @ref(determineNormalForm)
+RETURN: a polynomial defining the exceptional hypersurface for the normal form stored in N.normalForm, i.e. the parameter values that are not allowed for N.normalForm, stored in N.exceptionalHypersurface @*
+EXAMPLE: example determineExceptionalHypersurface, shows an example"
+{
+  def R = basering;
+  int c = N.corank;
+  if(c==1){poly f = 1; Poly F = makePoly(f);N.exceptionalHypersurface=F;return(N);}
+  def S = N.normalForm.in;
+  setring S;
+  list L = ringlist(S);
+  int n = size(L[1][2]);
+  ring T = 0,(var(1),var(2),a(1..n)),ds;
+  setring T;
+  poly g;
+  poly PolyTermsOnDelta;
+  poly diffPolyTermsOnDelta;
+  setring S;
+  if(size(N.normalForm.value)==0)
+  {
+    ERROR("a Normalform has not yet been determined.")
+  }
+  poly f = N.normalForm.value;
+  list NP = newtonPolygon(f);
+  list Delta;
+  int j = size(NP);
+  poly termsOnDelta;
+  poly PolyTermsOnDelta;
+  poly diffPolyTermsOnDelta;
+  for(int i=1;i<=j;i++)
+    {
+       Delta[1]=NP[i];
+       termsOnDelta = termsOnPolygon(f,Delta);
+       PolyTermsOnDelta=sat_with_exp(ideal(termsOnDelta),ideal(var(1)*var(2)))[1][1];
+       if(Delta[1][1][1]>Delta[1][1][2])
+       {
+          PolyTermsOnDelta=subst(PolyTermsOnDelta,var(1),1);
+          diffPolyTermsOnDelta=diff(PolyTermsOnDelta,var(2));
+       }
+       else
+       {
+          PolyTermsOnDelta=subst(PolyTermsOnDelta,var(2),1);
+          diffPolyTermsOnDelta=diff(PolyTermsOnDelta,var(1));
+       }
+       setring T;
+       poly PolyTermsOnDelta = imap(S,PolyTermsOnDelta);
+       poly diffPolyTermsOnDelta = imap(S,diffPolyTermsOnDelta);
+       if(Delta[1][1][1]>Delta[1][1][2])
+       {
+          poly h = resultant(PolyTermsOnDelta,diffPolyTermsOnDelta,var(2));
+        }
+        else
+        {
+          poly h = resultant(PolyTermsOnDelta,diffPolyTermsOnDelta,var(1));
+        }
+       if(g<>0)
+       {
+          g=g*h;
+        }
+        else
+        {
+          g=h;
+        }
+       setring S;
+     }
+     setring T;
+     ideal I = g;
+     I=radical(I);
+     Poly G = makePoly(I[1]);
+     N.exceptionalHypersurface=G;
+     setring R;
+  return(N);
+}
+example
+{
+ ring R = 0,(x,y,z),ds;
+ poly g = x^2*y^4+y^2*x^4+5*x^(10)+y^(11)+z^2;
+ poly phix = x+y^2+x^2+x*y+x^2*y+x*y^3;
+ poly phiy = y+y^2+2*x^2+x*y+y*x^2+y^2*x+x*y^4;
+ poly phiz = z+2*x+x^2+y^4*x;
+ map phi = R,phix,phiy,phiz;
+ g = phi(g);
+ Poly F = makePoly(g);
+ NormalForm N= determineNormalForm(F);
+ determineExceptionalHypersurface(N);
+}
+
+proc exceptionalHypersurface(NormalForm N)
+"USAGE: exceptionalHypersurface(N); N NormalForm of which the field N.exceptionalHypersurface is filled using @ref(determineNormalForm) and using @ref(determineExceptionalHypersurface)
+RETURN:  N.exceptionalHypersurface
+EXAMPLE: example exceptionalHypersurface, shows an example"
+{
+  def S = basering;
+  Poly F = N.exceptionalHypersurface;
+  def R = F.in;
+  setring R;
+  if(F.value<>-1)
+  {
+    setring S;
+    return(F);
+  }
+  else
+  {
+    N=determineExceptionalHypersurface(N);
+    F = N.exceptionalHypersurface;
+    setring S;
+    return(F);
+  }
+}
+example
+{
+ ring R = 0,(x,y,z),ds;
+ poly g = x^2*y^4+y^2*x^4+5*x^(10)+y^(11)+z^2;
+ poly phix = x+y^2+x^2+x*y+x^2*y+x*y^3;
+ poly phiy = y+y^2+2*x^2+x*y+y*x^2+y^2*x+x*y^4;
+ poly phiz = z+2x+x^2+y^4*x;
+ map phi = R,phix,phiy,phiz;
+ g = phi(g);
+ Poly F = makePoly(g);
+ NormalForm N= determineNormalForm(F);
+ N=determineExceptionalHypersurface(N);
+ exceptionalHypersurface(N);
+}
+
 
 proc nondegeneratePart(NormalForm N)
 "USAGE: nondegeneratePart(N); N NormalForm as given by @ref(determineNormalForm)
@@ -784,38 +997,38 @@ example
  germWithNNB(N);
 }
 
-proc germWithNormalizedNNB(NormalForm N)
-"USAGE: germWithNormalizedNNB(N); N NormalForm as given by @ref(determineNormalForm)
-RETURN:  a polynomial, returned as a Poly, that is stable equivalent to N.phi.sourcegerm.value with a normalized nondegenerate Newton boundary up to scalar multiplication @*
+proc determineGermWithSemiNormalizedNNB(NormalForm N)
+"USAGE: germWithSemiNormalizedNNB(N); N NormalForm as given by @ref(determineNormalForm)
+RETURN:  a polynomial, stored in N.phi.targetgerm, that is stable equivalent to N.phi.sourcegerm.value with a normalized nondegenerate Newton boundary up to scalar multiplication @*
 of each of its variables, if possible, or an ERROR message otherwise
-EXAMPLE: example germWithNormalizedNNB, shows an example"
+EXAMPLE: example germWithSemiNormalizedNNB, shows an example"
 {
     ring R = basering;
-    Poly FF =N.normalizedNNBGerm;
+    Poly FF =N.semiNormalizedNNBGerm;
     def S = FF.in;
     setring S;
     if(FF.value <>0 || N.corank==0)
     {
       setring R;
-      return(N.normalizedNNBGerm);
+      return(N.semiNormalizedNNBGerm);
     }
     else
     {
         RightEquivalenceChainWithPrecision Tr1;
-        RightEquivalenceChainWithPrecision Tr2;
         Tr1 = N.phi;
-        list L =classifyNB(Tr1,0,1);
-        Tr2 = L[2];
-        Poly H = Tr2.targetgerm;
+        list L =classifyNB(Tr1,0,1,1);
+        Tr1 = L[2];
+        Poly H = Tr1.targetgerm;
         def RR = H.in;
         setring RR;
         if(H.value==0)
         {
           ERROR("The degenerate part of the germ is 0");
         }
-        N.normalizedNNBGerm=Tr2.targetgerm;
+        N.semiNormalizedNNBGerm=Tr1.targetgerm;
+        N.phi = Tr1;
         setring R;
-        return(N.normalizedNNBGerm);
+        return(N);
     }
 }
 example
@@ -829,7 +1042,42 @@ example
  g = phi(g);
  Poly F = makePoly(g);
  NormalForm N = determineNormalForm(F);
- germWithNNB(N);
+ N=determineGermWithSemiNormalizedNNB(N);
+}
+
+
+proc germWithSemiNormalizedNNB(NormalForm N)
+"USAGE: germWithSemiNormalizedNNB(N); N NormalForm as given by @ref(determineNormalizedNNBGerm)
+RETURN:  a polynomial, returned as a Poly, that is stable equivalent to N.phi.sourcegerm.value with a normalized nondegenerate Newton boundary up to scalar multiplication @*
+of each of its variables, if possible, or an ERROR message otherwise
+EXAMPLE: example germWithSemiNormalizedNNB, shows an example"
+{
+    ring R = basering;
+    Poly FF =N.semiNormalizedNNBGerm;
+    def S = FF.in;
+    setring S;
+    if(FF.value ==0 && N.corank<>0)
+    {
+      ERROR"The input germ is not transformed to a germ with a normalized nondegernerate Newton boundary";
+    }
+    else
+    {
+        return(N.semiNormalizedNNBGerm);
+    }
+}
+example
+{
+ "EXAMPLE:"; echo=2;
+ ring R = 0,(x,y),ds;
+ poly g = (x^2+y^2)^2+5*x^(10)+y^(11);
+ poly phix = x+y^2+x^2+x*y+x^2*y+x*y^3;
+ poly phiy = y+y^2+2*x^2+x*y+y*x^2+y^2*x+x*y^4;
+ map phi = R,phix,phiy;
+ g = phi(g);
+ Poly F = makePoly(g);
+ NormalForm N = determineNormalForm(F);
+ N=determineGermWithSemiNormalizedNNB(N);
+ germWithSemiNormalizedNNB(N);
 }
 
 
@@ -862,7 +1110,7 @@ EXAMPLE: example modalityNNB, shows an example"
   RightEquivalenceChainWithPrecision Tr;
   Tr.sourcegerm = F;
   Tr.targetgerm = F;
-  list L = classifyNB(Tr,0,0);
+  list L = classifyNB(Tr,0,0,1);
   Tr = L[2];
   F = Tr.targetgerm;
   int m = modalityNB(F);
@@ -914,7 +1162,7 @@ EXAMPLE: example milnorNNB, shows an example"
   RightEquivalenceChainWithPrecision Tr;
   Tr.sourcegerm = F;
   Tr.targetgerm = F;
-  list L = classifyNB(Tr,0,0);
+  list L = classifyNB(Tr,0,0,1);
   int m = L[1];
   return(m);
 }
@@ -1009,7 +1257,7 @@ EXAMPLE: example deltaNNB, shows an example"
   RightEquivalenceChainWithPrecision Tr;
   Tr.sourcegerm = F;
   Tr.targetgerm = F;
-  list L = classifyNB(Tr,0,0);
+  list L = classifyNB(Tr,0,0,1);
   Tr =L[2];
   Poly P = Tr.targetgerm;
   list Q = deltaInvariant(P,L[1]);
@@ -1118,11 +1366,15 @@ RETURN:  the transformations (and in some cases their inverses) that was transfo
 with nondegenerate Newton boundary (in some cases the transformations normalize the Newton boundary is also given), is given up to filtration d, where d is a determinacy bound for N.source (returned as type RightEquivalenceChainWithPrecision as defined in @ref(polyclass.lib))@*
 EXAMPLE: example transformationsAfterSplit, shows an example"
 {
-  Poly normalizedNNBGerm = N.normalizedNNBGerm;
-  if(normalizedNNBGerm.value==0){
+  ring B = basering;
+  Poly semiNormalizedNNBGerm = N.semiNormalizedNNBGerm;
+  def R = semiNormalizedNNBGerm.in;
+  setring R;
+  if(semiNormalizedNNBGerm.value==0){
 "";
 "The transformations are only given up to transforming the input polynomial to a germ with a nondegenerate Newton boundary. The final transformations to normalize the germ are not yet determined.
 ";}
+setring B;
   return(N.phi);
 }
 example
@@ -1132,7 +1384,7 @@ example
  poly g = (x^2+y^2)^2+5*x^(10)+y^(11)+z^2;
  poly phix = x+y^2+x^2+x*y+x^2*y+x*y^3;
  poly phiy = y+y^2+2*x^2+x*y+y*x^2+y^2*x+x*y^4;
- poly phiz = z+2x+x^2+y^4*x;
+ poly phiz = z+2*x+x^2+y^4*x;
  map phi = R,phix,phiy,phiz;
  g = phi(g);
  Poly F = makePoly(g);
@@ -1142,30 +1394,68 @@ example
 
 
 proc determineNormalFormEquation(NormalForm N)
-"USAGE: determineNormalFormEquation(N); N a NormalForm as given by @ref(NormalForm)
+"USAGE: determineNormalFormEquation(N); N a NormalForm as given by @ref(determineNormalForm)
 RETURN: a normalform equation, stored in N.normalFormEquation, occuring in the normalform, stored in N.normalForm, of the polynomial, stored in N.phi.sourcegerm, as well as polynomials, stored in N.extension1 and N.extension2 (of type Poly), defining the parameters, @*
 given as ring variables in N.normalFormEquation.
 EXAMPLE: example determineNormalFormEquation, shows an example"
 {
   def B = basering;
+  int c = N.corank;
+  if(c==1){N.normalFormEquation=N.normalForm; return(N);}
   RightEquivalenceChainWithPrecision Tr=N.phi;
-  list L = classifyNB(Tr,0,1);
-  Tr = L[2];
+  for(int rr=2;rr<=2;rr++)
+  {
+    if(rr==2)
+    {
+      list L = classifyNB(Tr,0,1,1);
+      Tr = L[2];
+      Poly F = Tr.targetgerm;
+    }
+    else
+    {
+      list L = classifyNB(Tr,0,1,0);
+      Tr = L[2];
+    }
   list RB = N.parameters;
+  int nn = size(RB);
+  if(nn>0)
+  {
+    def SS = RB[1].in;
+    setring SS;
+  }
+  list sb;
+  for(int i=1;i<=nn;i++)
+  {
+    sb[i]=RB[i].value;
+  }
   Poly F = Tr.targetgerm;
-  N.normalizedNNBGerm=F;
-  if(size(RB)==0)
+  ring R = F.in;
+  setring R;
+  if(rr==2)
+  {
+    N.semiNormalizedNNBGerm=F;
+  }
+  if(nn==0)
   {
     N.normalFormEquation = N.normalForm;
     return(N);
   }
-  ring R = F.in;
-  setring R;
-  if(R<>B)
+  if(nn>0)
   {
-    list RB = fetch(B,RB);
+    list rb=fetch(SS,sb);
+    list param = rb;
+    list Rb;
+    for(int i=1;i<=nn;i++)
+    {
+      Rb[i]=makePoly(rb[i]);
+    }
+    N.parameters=Rb;
   }
-  list param = RB;
+  else
+  {
+    list param;
+    list rb;
+  }
   poly f = F.value;
   list NB = newtonPolygon(f);
   poly f1 = termsOnPolygon(f,NB);
@@ -1174,10 +1464,10 @@ EXAMPLE: example determineNormalFormEquation, shows an example"
   int d=Tr.precision;
   list w = piecewiseWeightOfPolygon(NB);
   int wd = -1;
-  for(int i=1;i<=size(RB);i++)
+  for(int i=1;i<=size(rb);i++)
   {
-    int s=piecewisedegree(RB[i],w);
-    int dr = deg(RB[i]);
+    int s=piecewisedegree(rb[i],w);
+    int dr = deg(rb[i]);
     if(wd<s)
     {wd=s;}
     if(dr>d)
@@ -1189,21 +1479,20 @@ EXAMPLE: example determineNormalFormEquation, shows an example"
   poly f1gprec = f1-f11;
   f = piecewiseJet(f,w,wd);
   poly fgamma = f-f11;
-  for(int i=1;i<=size(RB);i++)
+  for(int i=1;i<=size(rb);i++)
   {
-    fgamma = fgamma-coeff(fgamma,RB[i])*RB[i];
+    fgamma = fgamma-coeff(fgamma,rb[i])*rb[i];
   }
-  list S = monomials(fgamma);
+  list T = monomials(fgamma);
   int wfgamma = piecewiseOrd(fgamma,w);
   int l=0;
-  while(size(S)<>0)
+  while(size(T)<>0)
   {
     poly erase = piecewiseJet(fgamma,w,wfgamma)-piecewiseJet(fgamma,w,wfgamma-1);
     if(erase<>0)
     {
       int HDT;
       HDT = wfgamma+1;
-      noether = x^d;
       ideal I=idealOfHigherWeightedDeg(f,HDT,w,d);
       ideal Iparam;
       for(int i=1;i<=size(param);i++)
@@ -1214,13 +1503,13 @@ EXAMPLE: example determineNormalFormEquation, shows an example"
           poly mm = poly(param[i]);
           I =I,mm;
           param=delete(param,i);
+          i=i-1;
         }
       }
       list L = ringlist(R);
       L[3][1][1]="dp";
       def R1 = ring(L);
       setring R1;
-      noether = x^d;
       poly diffx = fetch(R,diffx);
       poly diffy = fetch(R,diffy);
       ideal I = fetch(R,I);
@@ -1262,12 +1551,12 @@ EXAMPLE: example determineNormalFormEquation, shows an example"
       f = jet(f,d);
       f = piecewiseJet(f,w,wd);
       poly fgamma = f-f11;
-      for(int i=1;i<=size(RB);i++)
+      for(int i=1;i<=size(rb);i++)
       {
-        fgamma = fgamma-coeff(fgamma,RB[i])*RB[i];
+        fgamma = fgamma-coeff(fgamma,rb[i])*rb[i];
       }
-      list S = monomials(fgamma);
-      if(size(S)==0){break;}
+      list T = monomials(fgamma);
+      if(size(T)==0){break;}
       int wfgamma1 = piecewiseOrd(fgamma,w);
       while(wfgamma1<wfgamma || wfgamma==wfgamma1)
       {
@@ -1319,7 +1608,6 @@ EXAMPLE: example determineNormalFormEquation, shows an example"
           gen2 = gen2+gen2x;
         }
         matrix N1[1][2] = x-gen1,y-gen2;
-
         int p1 = ord(gen1);
         int p2 = ord(gen2);
         if(p1==0){p3=p2;}
@@ -1335,24 +1623,27 @@ EXAMPLE: example determineNormalFormEquation, shows an example"
         f = jet(f,d);
         f = piecewiseJet(f,w,wd);
         poly fgamma = f-f11;
-        for(int i=1;i<=size(RB);i++)
+        for(int i=1;i<=size(rb);i++)
         {
-          fgamma = fgamma-coeff(fgamma,RB[i])*RB[i];
+          fgamma = fgamma-coeff(fgamma,rb[i])*rb[i];
         }
-        list S = monomials(fgamma);
-        if(size(S)==0){break;}
+        list T = monomials(fgamma);
+        if(size(T)==0){break;}
         wfgamma1 = piecewiseOrd(fgamma,w);
       }
     }
     else{wfgamma=piecewiseOrd(fgamma,w);}
   }
+  F=makePoly(f);
+  Tr.targetgerm=F;
+}
   if(basering<>R)
   {
       poly f1gprec =fetch(R,f1gprec);
   }
   f=f+f1gprec;
   Poly F = makePoly(f);
-  N.nonNormalizedNormalFormEquation = F;
+  N.normalFormEquationUpToRescaling = F;
   poly h1=0;
   Poly H1 = makePoly(h1);
   N.extension1 = H1;
@@ -1372,6 +1663,7 @@ EXAMPLE: example determineNormalFormEquation, shows an example"
   int ll = size(f11);
   for(int l = 1;l<=ll;l++)
   {
+    poly f = F.value;
     if(basering <> R)
     {
       poly pp=fetch(R,pp);
@@ -1380,13 +1672,13 @@ EXAMPLE: example determineNormalFormEquation, shows an example"
     pp=pp-leadcoef(pp)*m;
     e2=leadexp(m)[2];
     e1=leadexp(m)[1];
-    for(r=1;r<=size(RB);r++)
+    for(r=1;r<=size(rb);r++)
     {
-      if(RB[r]==m)
+      if(rb[r]==m)
       {
         break;
       }
-      if(r==size(RB))
+      if(r==size(rb))
       {
         if(basering <>R)
         {
@@ -1397,7 +1689,6 @@ EXAMPLE: example determineNormalFormEquation, shows an example"
           poly f = F.value;
         }
         cp= (1/coeff(f,m));
-        if(cp==1){break;}
         list L = ringlist(R);
         if(minpoly==0)     //scaling without field extension
         {
@@ -1463,7 +1754,7 @@ EXAMPLE: example determineNormalFormEquation, shows an example"
                       minpoly = number(subst(h,var(2),a));
                       poly f = fetch(R,f);
                       f = jet(f,Tr.precision);
-                      list RB = fetch(R,RB);
+                      list rb = fetch(R,rb);
                       f = subst(f,var(2),a*var(2));
                       Tr=addTransformation(Tr,poly(var(1)),poly(a*var(2)),poly(var(1)),poly((1/a)*var(2)));
                       f=subst(f,var(1),a^(-n)*var(1));
@@ -1519,7 +1810,7 @@ EXAMPLE: example determineNormalFormEquation, shows an example"
                     minpoly = number(subst(h,var(2),a));
                     poly f = fetch(R,f);
                     f = jet(f,Tr.precision);
-                    list RB = fetch(R,RB);
+                    list rb = fetch(R,rb);
                     f = subst(f,var(2),a*var(2));
                     Tr=addTransformation(Tr,poly(var(1)),poly(a*var(2)),poly(var(1)),poly((1/a)*var(2)));
                     if(basering<>R)
@@ -1589,7 +1880,7 @@ EXAMPLE: example determineNormalFormEquation, shows an example"
                       minpoly = number(subst(h,var(1),a));
                       poly f = fetch(R,f);
                       f = jet(f,Tr.precision);
-                      list RB = fetch(R,RB);
+                      list rb = fetch(R,rb);
                       f = subst(f,var(1),a*var(1));
                       Tr=addTransformation(Tr,poly(a*var(1)),poly(var(2)),poly((1/a)*var(1)),poly(var(2)));
                       f=subst(f,var(2),(1/(a^n))*var(2));
@@ -1642,7 +1933,7 @@ EXAMPLE: example determineNormalFormEquation, shows an example"
                     poly h = fetch(R,h);
                     minpoly = number(subst(h,var(1),a));
                     poly f = fetch(R,f);
-                    list RB = fetch(R,RB);
+                    list rb = fetch(R,rb);
                     f = jet(f,Tr.precision);
                     f = subst(f,var(1),a*var(1));
                     Tr=addTransformation(Tr,poly(a*var(1)),poly(var(2)),poly((1/a)*var(1)),poly(var(2)));
@@ -1724,7 +2015,7 @@ EXAMPLE: example determineNormalFormEquation, shows an example"
                       ideal I = std(min1,min2);
                       poly f = fetch(T,f);
                       f = jet(f,Tr.precision);
-                      list RB = fetch(R,RB);
+                      list rb = fetch(R,rb);
                       f = subst(f,var(2),e*var(2));
                       Tr=addTransformation(Tr,poly(var(1)),poly(e*var(2)),poly(var(1)),poly(v*var(2)));
                       f=subst(f,var(1),v^n*var(1));
@@ -1808,7 +2099,7 @@ EXAMPLE: example determineNormalFormEquation, shows an example"
                     ideal I = std(min);
                     poly f = fetch(T,f);
                     f = jet(f,Tr.precision);
-                    list RB = fetch(R,RB);
+                    list rb = fetch(R,rb);
                     f = subst(f,var(2),e*var(2));
                     Tr=addTransformation(Tr,poly(var(1)),poly(e*var(2)),poly(0),poly(0));
                     poly fff = f;
@@ -1898,7 +2189,7 @@ EXAMPLE: example determineNormalFormEquation, shows an example"
                     I=std(I);
                     poly f = fetch(T,f);
                     f = jet(f,Tr.precision);
-                    list RB = fetch(R,RB);
+                    list rb = fetch(R,rb);
                     f = subst(f,var(1),v*var(1));
                     Tr=addTransformation(Tr,poly(v*var(1)),poly(var(2)),poly(e*var(1)),poly(var(2)));
                     f=subst(f,var(2),e^n*var(2));
@@ -1906,11 +2197,12 @@ EXAMPLE: example determineNormalFormEquation, shows an example"
                     poly fff = f;
                     poly fff1;
                     int s =size(f);
+                    poly cl;
                     for(int i=1;i<=s;i++)
                     {
-                        poly c = leadcoef(fff)*leadmonom(fff);
-                        c = reduce(c,I);
-                        fff1=fff1+c;
+                        cl = leadcoef(fff)*leadmonom(fff);
+                        cl = reduce(cl,I);
+                        fff1=fff1+cl;
                         fff=fff-leadcoef(fff)*leadmonom(fff);
                     }
                     f= fff1;
@@ -1985,7 +2277,7 @@ EXAMPLE: example determineNormalFormEquation, shows an example"
                     ideal I = std(min);
                     poly f = fetch(T,f);
                     f = jet(f,Tr.precision);
-                    list RB = fetch(R,RB);
+                    list rb = fetch(R,rb);
                     f = subst(f,var(1),v*var(1));
                     Tr=addTransformation(Tr,poly(v*var(1)),poly(var(2)),poly(0),poly(0));
                     poly fff = f;
@@ -2034,6 +2326,160 @@ example
  NormalForm N;
  N = determineNormalForm(F);
  determineNormalFormEquation(N);
+}
+
+proc normalFormEquation(NormalForm N)
+"USAGE: normalFormEquation(N); N NormalForm of which the field N.normalFormEquation is filled using @ref(determineNormalForm) and using @ref(determineNormalFormEquation)
+RETURN:  N.normalFormEquation
+EXAMPLE: example normalFormEquation, shows an example"
+{
+  def S = basering;
+  Poly F = N.normalFormEquation;
+  def R = F.in;
+  setring R;
+  if(F.value<>0)
+  {
+    setring S;
+    return(F);
+  }
+  else
+  {
+    N=determineNormalFromEquation(N);
+    F = N.normalFormEquation;
+    setring S;
+    return(F);
+  }
+}
+example
+{
+ "EXAMPLE:"; echo=2;
+ ring R=0,(x,y),ds;
+ poly g = x^4+2*x^2*y^2+y^4+x^(10)+y^(10);
+ poly phix = x+y^2+x^2+x*y+x^2*y+x*y^3;
+ poly phiy = y+y^2+2*x^2+x*y+y*x^2+y^2*x+x*y^4;
+ map phi = R,phix,phiy;
+ g=phi(g);
+ Poly F = makePoly(g);
+ NormalForm N;
+ N = determineNormalForm(F);
+ N = determineNormalFormEquation(N);
+ normalFormEquation(N);
+}
+
+proc normalFormEquationUpToRescaling(NormalForm N)
+"USAGE: normalFormEquationUpToRescaling(N); N NormalForm of which the field N.normalFormEquation is filled using @ref(determineNormalForm) and using @ref(determineNormalFormEquation)
+RETURN: N.normalFormEquationUpToRescaling, a Poly which is right-equivalent to N.normalFormEquation, by the transformation x-->ax, y-->by, a,b complex numbers, such that its ring is minimal 
+EXAMPLE: example normalFormEquationUpToRescaling, shows an example"
+{
+  def S = basering;
+  Poly F = N.normalFormEquationUpToRescaling;
+  def R = F.in;
+  setring R;
+  if(F.value<>0)
+  {
+    setring S;
+    return(F);
+  }
+  else
+  {
+    N=determineNormalFromEquation(N);
+    F = N.normalFormEquationUpToRescaling;
+    setring S;
+    return(F);
+  }
+}
+example
+{
+ "EXAMPLE:"; echo=2;
+ ring R=0,(x,y),ds;
+ poly g = x^4+2*x^2*y^2+y^4+x^(10)+y^(10);
+ poly phix = x+y^2+x^2+x*y+x^2*y+x*y^3;
+ poly phiy = y+y^2+2*x^2+x*y+y*x^2+y^2*x+x*y^4;
+ map phi = R,phix,phiy;
+ g=phi(g);
+ Poly F = makePoly(g);
+ NormalForm N;
+ N = determineNormalForm(F);
+ N = determineNormalFormEquation(N);
+ normalFormEquationUpToRescaling(N);
+}
+
+proc determineArnoldType(N)
+"USAGE: determineArnoldType(N); N NormalForm which was created using @ref(determineNormalForm), with the field N.modality<=2
+RETURN: a NormalForm N in which the Arnold classification of N.phi.sourcegerm is stored in N.ArnoldType
+EXAMPLE: example N.ArnoldType, shows an example"
+{
+  def B = basering;
+  if(N.modality>2)
+  {ERROR("The singularity has modality>2")}
+  Poly F = N.normalForm;
+  def R = F.in;
+  setring R;
+  poly f = F.value;
+  list NP = newtonPolygon(f);
+  list V =latticePoints(NP);
+  list Vm = latticeToMonomials(V);
+  ring S=0,(x,y),ds;
+  list V = fetch(R,Vm);
+  poly f=0;
+  for(int i=1;i<=size(V);i++)
+  {
+    f=f+V[i];
+  }
+  N.ArnoldType = complexType(f)[1];
+  setring B;
+  return(N);
+}
+example
+{
+ "EXAMPLE:"; echo=2;
+ ring R=0,(x,y),ds;
+ poly g = x^4+2*x^2*y^2+y^4+x^(10)+y^(10);
+ poly phix = x+y^2+x^2+x*y+x^2*y+x*y^3;
+ poly phiy = y+y^2+2*x^2+x*y+y*x^2+y^2*x+x*y^4;
+ map phi = R,phix,phiy;
+ g=phi(g);
+ Poly F = makePoly(g);
+ NormalForm N;
+ N = determineNormalForm(F);
+ N = determineArnoldType(N);
+ N.ArnoldType;
+}
+
+proc ArnoldType(N)
+"USAGE: ArnoldType(N); N NormalForm which was created using @ref(determineNormalForm), with the field N.modality<=2
+RETURN: a NormalForm N in which the Arnold classification of N.phi.sourcegerm is stored in N.ArnoldType
+EXAMPLE: example N.ArnoldType, shows an example"
+{
+  def S = basering;
+  string CT = N.ArnoldType;
+  if(CT<>"")
+  {
+    setring S;
+    return(CT);
+  }
+  else
+  {
+    N=determineArnoldType(N);
+    string CT = N.ArnoldType;
+    setring S;
+    return(CT);
+  }
+}
+example
+{
+ "EXAMPLE:"; echo=2;
+ ring R=0,(x,y),ds;
+ poly g = x^4+2*x^2*y^2+y^4+x^(10)+y^(10);
+ poly phix = x+y^2+x^2+x*y+x^2*y+x*y^3;
+ poly phiy = y+y^2+2*x^2+x*y+y*x^2+y^2*x+x*y^4;
+ map phi = R,phix,phiy;
+ g=phi(g);
+ Poly F = makePoly(g);
+ NormalForm N;
+ N = determineNormalForm(F);
+ N = determineArnoldType(N);
+ ArnoldType(N);
 }
 
 proc determineNormalFormList(poly f)
@@ -2113,7 +2559,7 @@ example
  L[11];       //Determinacy
 }
 
-proc determineNormalFormEquationList(poly f)
+proc determineNormalFormWithEqList(poly f)
 "USAGE: determineNormalFormEquationList(f); f poly
 RETURN: if f is right equivalent to a germ with a nondegenerate Newton boundary a list with entries:@*
         [1]: the embedding dimension (given as type int)@*
@@ -2130,7 +2576,7 @@ RETURN: if f is right equivalent to a germ with a nondegenerate Newton boundary 
         [11]: the number of branches of f (given as type int)@*
         [12]: a determinacy bound for f (given as type int),@*
 an ERROR message otherwise
-EXAMPLE: example determineNormalFormEquationList, shows an example"
+EXAMPLE: example determineNormalFormWithEqList, shows an example"
 {
    def R = basering;
    Poly F = makePoly(f);
@@ -2189,7 +2635,7 @@ example
  poly phiz = z+2x+x^2+y^4*x;
  map phi = R,phix,phiy,phiz;
  f = phi(f);
- list L = determineNormalFormEquationList(f);
+ list L = determineNormalFormWithEqList(f);
  L[1];        //Embedding dimension
  L[2];        //Corank of singularity
  L[3];        //Normalform of type
@@ -2215,6 +2661,214 @@ example
  L[12];       //Determinacy
 }
 
+proc determineNormalFormWithEHList(poly f)
+"USAGE: determineNormalFormEquationList(f); f poly
+RETURN: if f is right equivalent to a germ with a nondegenerate Newton boundary a list with entries:@*
+        [1]: the embedding dimension (given as type int)@*
+        [2]: the corank of the singularity defined by f (given as type int)@*
+        [3]: the corner points of the Newton boundary of the normal form of f, which classifies the singularity type (given as type string)@*
+        [4]: a ring that contains a polynomial "normalform" that is the normalform of f (given as type poly)@*
+        [5]: a ring that contains a polynomial "eh" that is the exceptional hypersurfaceof the normalform in L[4]@*
+        [5]: a ring that contains a polynomial "nondegeneratepart" that is the nondegenerate part of the normalform of f (given as type poly)@*
+        [6]: a list of the monomials corresponding to the moduli terms in normalform (given as a list with entries of type poly)@*
+        [7]: the modality of the singularity defined by f (given as type int)@*
+        [8]: the Milnor number of f (given as type int)@*
+        [9]: the Delta invariant of f (given as type int)@*
+        [10]: the number of branches of f (given as type int)@*
+        [11]: a determinacy bound for f (given as type int),@*
+an ERROR message otherwise
+EXAMPLE: example determineNormalFormWithEHList, shows an example"
+{
+   def R = basering;
+   Poly F = makePoly(f);
+   NormalForm N;
+   N = determineNormalForm(F);
+   N= determineExceptionalHypersurface(N);
+   Poly P = N.normalForm;
+   list L;
+   L[1] = N.numbervars;
+   L[2] = N.corank;
+   L[3] = N.singularityType;
+   Poly NormalF = N.normalForm;
+   def RR = NormalF.in;
+   setring RR;
+   poly normalformpoly = NormalF.value;
+   export normalformpoly;
+   setring R;
+   L[4] = RR;
+   Poly EH = N.exceptionalHypersurface;
+   def VV = EH.in;
+   setring VV;
+   poly eh = EH.value;
+   export eh;
+   setring R;
+   L[5] = VV;
+   Poly NGP=N.nondegeneratePart;
+   def S = NGP.in;
+   setring S;
+   poly nondegeneratepart = NGP.value;
+   export nondegeneratepart;
+   setring R;
+   L[6] = N.parameters;
+   L[7] = S;
+   L[8] = N.modality;
+   L[9] = N.milnorNumber;
+   L[10] = N.delta;
+   L[11] = N.numberOfBranches;
+   L[12] = N.determinacy;
+   return(L);
+}
+example
+{
+ "EXAMPLE:"; echo=2;
+ ring R = 0,(x,y,z),ds;
+ poly f = (x^2+y^2)^2+5*x^(10)+y^(11)+z^2;
+ poly phix = x+y^2+x^2+x*y+x^2*y+x*y^3;
+ poly phiy = y+y^2+2*x^2+x*y+y*x^2+y^2*x+x*y^4;
+ poly phiz = z+2x+x^2+y^4*x;
+ map phi = R,phix,phiy,phiz;
+ f = phi(f);
+ list L = determineNormalFormWithEHList(f);
+ L[1];        //Embedding dimension
+ L[2];        //Corank of singularity
+ L[3];        //Normalform of type
+ def RR = L[4];
+ setring RR;
+ normalformpoly;  //Normalform
+ setring R;
+ def VV =L[5];
+ setring VV;
+ eh; //exceptional hypersurface
+ setring R;
+ L[6];        //Momomials corresponding to moduli terms
+ def TT = L[7];
+ setring TT;
+ nondegeneratepart;   //Nondegenerate part
+ setring R;
+ L[8];        //Modality
+ L[9];        //Milnor number
+ L[10];        //Delta invariant
+ L[11];       //Number of branches
+ L[12];       //Determinacy
+}
+
+proc determineNormalFormWithEqAndEHList(poly f)
+"USAGE: determineNormalFormEquationList(f); f poly
+RETURN: if f is right equivalent to a germ with a nondegenerate Newton boundary a list with entries:@*
+        [1]: the embedding dimension (given as type int)@*
+        [2]: the corank of the singularity defined by f (given as type int)@*
+        [3]: the corner points of the Newton boundary of the normal form of f, which classifies the singularity type (given as type string)@*
+        [4]: a ring that contains a polynomial "normalform" that is the normalform of f (given as type poly)@*
+        [5]: a ring that contains a polynomial "eh" that is the exceptional hypersurfaceof the normalform in L[4]@*
+        [5]: a ring that contains a polynomial "nondegeneratepart" that is the nondegenerate part of the normalform of f (given as type poly)@*
+        [6]: a list of the monomials corresponding to the moduli terms in normalform (given as a list with entries of type poly)@*
+        [7]: a ring containing a normalform equation "normalformequation" of f in the normalform "normalform" (given as a poly), @*
+             as well as polynomials "extension1" and "extension2" (given as poly's) that defines the parameters, given as variables, in the given normalform equation @*
+        [8]: the modality of the singularity defined by f (given as type int)@*
+        [9]: the Milnor number of f (given as type int)@*
+        [10]: the Delta invariant of f (given as type int)@*
+        [11]: the number of branches of f (given as type int)@*
+        [12]: a determinacy bound for f (given as type int),@*
+an ERROR message otherwise
+EXAMPLE: example determineNormalFormWithEqAndEHList, shows an example"
+{
+   def R = basering;
+   Poly F = makePoly(f);
+   NormalForm N;
+   N = determineNormalForm(F);
+   N= determineNormalFormEquation(N);
+   N= determineExceptionalHypersurface(N);
+   Poly P = N.normalForm;
+   list L;
+   L[1] = N.numbervars;
+   L[2] = N.corank;
+   L[3] = N.singularityType;
+   Poly NormalF = N.normalForm;
+   def RR = NormalF.in;
+   setring RR;
+   poly normalformpoly = NormalF.value;
+   export normalformpoly;
+   setring R;
+   L[4] = RR;
+   Poly EH = N.exceptionalHypersurface;
+   def VV = EH.in;
+   setring VV;
+   poly eh = EH.value;
+   export eh;
+   setring R;
+   L[5] = VV;
+   Poly NGP=N.nondegeneratePart;
+   def S = NGP.in;
+   setring S;
+   poly nondegeneratepart = NGP.value;
+   export nondegeneratepart;
+   setring R;
+   L[6] = N.parameters;
+   L[7] = S;
+   Poly normalFE = N.normalFormEquation;
+   def SS = normalFE.in;
+   setring SS;
+   poly normalformequation = normalFE.value;
+   normalformequation;
+   export normalformequation;
+   Poly Ext1=N.extension1;
+   poly extension1=Ext1.value;
+   extension1;
+   Poly Ext2=N.extension2;
+   poly extension2=Ext2.value;
+   export extension1;
+   export extension2;
+   setring R;
+   L[8]=SS;
+   L[9] = N.modality;
+   L[10] = N.milnorNumber;
+   L[11] = N.delta;
+   L[12] = N.numberOfBranches;
+   L[13] = N.determinacy;
+   return(L);
+}
+example
+{
+ "EXAMPLE:"; echo=2;
+ ring R = 0,(x,y,z),ds;
+ poly f = (x^2+y^2)^2+5*x^(10)+y^(11)+z^2;
+ poly phix = x+y^2+x^2+x*y+x^2*y+x*y^3;
+ poly phiy = y+y^2+2*x^2+x*y+y*x^2+y^2*x+x*y^4;
+ poly phiz = z+2*x+x^2+y^4*x;
+ map phi = R,phix,phiy,phiz;
+ f = phi(f);
+ list L = determineNormalFormWithEqAndEHList(f);
+ L[1];        //Embedding dimension
+ L[2];        //Corank of singularity
+ L[3];        //Normalform of type
+ def RR = L[4];
+ setring RR;
+ normalformpoly;  //Normalform
+ setring R;
+ def VV =L[5];
+ setring VV;
+ eh; //exceptional hypersurface
+ setring R;
+ L[6];        //Momomials corresponding to moduli terms
+ def TT = L[7];
+ setring TT;
+ nondegeneratepart;   //Nondegenerate part
+ def SS = L[8];
+ setring SS;
+ normalformequation;  //Normalform equation
+ minpoly;             //minpoly defining the parameter in the underlying ring
+ extension1;          //poly defining a parameter, given as a variable, in the ring
+ extension2;          //poly defining a parameter, given as a varible, in the ring
+ setring R;
+ L[9];        //Modality
+ L[10];        //Milnor number
+ L[11];        //Delta invariant
+ L[12];       //Number of branches
+ L[13];       //Determinacy
+}
+
+
+
 static proc addTransformation(RightEquivalenceChainWithPrecision Tr, poly fx,poly fy,poly gx, poly gy)
 {
   PolynomialRightEquivalence RE;
@@ -2229,7 +2883,11 @@ static proc addTransformation(RightEquivalenceChainWithPrecision Tr, poly fx,pol
   return(Tr);
 }
 
-static proc regularBasis(Poly F, int a)
+proc regularBasis(Poly F, int a)
+"USAGE: regularBasis(F,a); F Poly, a int 
+RETURN:  a list that contains a regular basis of F.value with respect to the piecewiseweight defined by the Newton polygon of F.value. If a=1, the only the elements of the 
+regular basis that lie above or on the Newton polygon defined by F.value is given.
+EXAMPLE: example regularBasis, shows an example"
 {
   ring baseRing = basering;
   int p = 33000;
@@ -2247,6 +2905,7 @@ static proc regularBasis(Poly F, int a)
     list Vm = latticeToMonomials(V);
     def Rl=ring(l);
     setring Rl;
+    list rBasis;
     list Vm = fetch(R,Vm);
     poly f = fetch(R,f);
     poly g;
@@ -2276,6 +2935,7 @@ static proc regularBasis(Poly F, int a)
       else
       {
         int t = 0;
+        int mind = piecewisedegree(Vm[1],wt);
       }
       for(int i=t;i<= h;i++)
       {
@@ -2314,7 +2974,6 @@ static proc regularBasis(Poly F, int a)
            maxd=wd;
         }
       }
-      list rBasis;
       if(a==1)
       {
         for(int i=1;i<=(maxd-mind+1);i++)
@@ -2324,10 +2983,16 @@ static proc regularBasis(Poly F, int a)
             for(int k=1;k<=size(L(maxd-i+1));k++)
             {
               poly mon = L(maxd-i+1)[k];
-              if(reduce(mon,J)!=0)
+              if(i==(maxd-mind+1) && deg(mon)<h && (leadexp(mon)[1]==0 || leadexp(mon)[2]==0 ||leadexp(mon)[1]==1 || leadexp(mon)[2]==1))
               {
-                J=std(J+ideal(mon));
-                rBasis[size(rBasis)+1]= mon;
+              }
+              else
+              {
+                if(reduce(mon,J)!=0)
+                {
+                  J=std(J+ideal(mon));
+                  rBasis[size(rBasis)+1]= mon;
+                }
               }
             }
           }
@@ -2342,19 +3007,30 @@ static proc regularBasis(Poly F, int a)
             for(int k=1;k<=size(L(maxd-i+1));k++)
             {
               poly mon = L(maxd-i+1)[k];
-              if(reduce(mon,J)!=0)
+              if(i==(maxd-mind+1) && deg(mon)<h && (leadexp(mon)[1]==0 || leadexp(mon)[2]==0 ||leadexp(mon)[1]==1 || leadexp(mon)[2]==1))
               {
-                J=std(J+ideal(mon));
-                rBasis[size(rBasis)+1]= mon;
+              }
+              else
+              {
+                if(reduce(mon,J)!=0)
+                {
+                  J=std(J+ideal(mon));
+                  rBasis[size(rBasis)+1]= mon;
+                }
               }
             }
           }
         }
       }
-      if(size(rBasis)==md && a==1)
+      int srBasis = size(rBasis);
+      if(srBasis==md && a==1)
       {
         setring baseRing;
-        list rBasis = fetch(Rl,rBasis);
+        if(srBasis==0){list rBasis;}
+        if((baseRing!=Rl) && (srBasis<>0))
+        {
+          list rBasis = fetch(Rl,rBasis);
+        }
         return(rBasis)
       }
       else
@@ -2375,6 +3051,15 @@ static proc regularBasis(Poly F, int a)
         p=prime(p-1);
       }
   }
+}
+example
+{
+ "EXAMPLE:"; echo=2;
+ ring R = 0,(x,y),ds;
+poly f = x^9+x^2*y^4+y^2*x^4+y^8;
+Poly F = makePoly(f);
+regularBasis(F,0); 
+regularBasis(F,1);
 }
 
 static proc maximumFiltration(poly f){
@@ -2584,6 +3269,7 @@ static proc truncateAtHighestCorner(RightEquivalenceChainWithPrecision Tr,list #
       {
         int hc;
         b = deg(highcorner(I));
+        Tr.HC=b+1;
         b = b+2;
         int j;
         for(j = 1; j < 3; j++)
@@ -2605,6 +3291,7 @@ static proc truncateAtHighestCorner(RightEquivalenceChainWithPrecision Tr,list #
   setring S;
   return(Tr);
 }
+
 
 static proc lowestJet(poly f, intvec w)
 {
@@ -2709,8 +3396,8 @@ static proc doLinearTransformation(RightEquivalenceChainWithPrecision Tr)
     }
   }
   poly ff = lintrafo(f,ideal(fx,fy));
-  Poly recordx = lintrafo(var(1),ideal(fx,fy));
-  Poly recordy =  lintrafo(var(2),ideal(fx,fy));
+  poly recordx = lintrafo(var(1),ideal(fx,fy));
+  poly recordy =  lintrafo(var(2),ideal(fx,fy));
 
   int j = L[2][Sort[size(Sort)]];
   int k = L[2][Sort[size(Sort)-1]];
@@ -2734,6 +3421,8 @@ static proc doLinearTransformation(RightEquivalenceChainWithPrecision Tr)
   Poly FF=makePoly(ff);
   PolynomialRightEquivalence Lin;
   Lin.in = basering;
+  Poly Recordx = makePoly(recordx);
+  Poly Recordy = makePoly(recordy);
   Lin.images = list(recordx,recordy);
   Lin.imagesInverse = list(fx,fy);
   Tr.transformations = list(Lin);
@@ -2852,7 +3541,7 @@ static proc doWeightedLinearTransformationExt(poly f1,list NF1,RightEquivalenceC
   }
   else
   {
-    if(deg(subst(fac[s][1],var(1),0))>1){return(Tr,0);}
+    if(deg(subst(fac[s][1],var(1),0))>1){"return";return(Tr,0);}
     for(int i=1;i<=size(fac);i++)
     {
       if(i!=s)
@@ -2861,9 +3550,8 @@ static proc doWeightedLinearTransformationExt(poly f1,list NF1,RightEquivalenceC
         g=g*h;
       }
     }
-    ideal I =g;
     g = sat_with_exp(ideal(g),ideal(var(1)*var(2)))[1][1];
-    if(milnor(g)==-1 && g!=1)
+    if((milnor(g)==-1) && (g!=1))
     {
       return(Tr,0);
     }
@@ -3052,9 +3740,10 @@ SLLL.newFromOld =number(0);
           else
           {
             k=1;
-            def S = splitring(g1,a);
-            setring S;
-            SLLL.in = S;
+            splitring(g1,a);
+            def K(i) = splitring(g1,a);
+            setring K(i);
+            SLLL.in = K(i);
             poly h = fetch(R,h);
             h = subst(h,a,erg[1]);
             list L  = factorize(h);
@@ -3155,7 +3844,7 @@ static proc CutOff(poly g, poly h, int d, list w)
    return(g1);
 }
 
-static proc idealOfHigherWeightedDeg(poly f, int d, list w, int dt;)
+proc idealOfHigherWeightedDeg(poly f, int d, list w, int dt;)
 {
   for(int i =1;i<=size(w);i++)
   {
@@ -3165,7 +3854,7 @@ static proc idealOfHigherWeightedDeg(poly f, int d, list w, int dt;)
   }
   ideal I;
   while(1==1)
-  {
+  { 
     poly tst=0;
     for(int i=1;i<=size(w);i++)
     {
@@ -3178,6 +3867,10 @@ static proc idealOfHigherWeightedDeg(poly f, int d, list w, int dt;)
           for(int j=0;j<=wsx;j++)
           {
             int wsy = (di-(j*wo(i)[1])) div wo(i)[2];
+            if((((di-(j*wo(i)[1])) mod wo(i)[2])<>0) && (piecewisedegree(var(1)^(j)*var(2)^(wsy+1),w)>d))
+            {
+              tst = tst+var(1)^(j)*var(2)^(wsy);
+            }
             if(j*wo(i)[1]+wsy*wo(i)[2]==di)
             {
               m = var(1)^(j)*var(2)^(wsy);
@@ -3270,20 +3963,38 @@ static proc modalityNB(Poly F) //wrapper
    }
 }
 
-static proc Test(poly f)
+static proc testNormalisationCondition(poly f)
 {
   poly g = sat_with_exp(ideal(f),ideal(var(1)*var(2)))[1][1];
   if(milnornumber(g)>-1)
   {
-    if(sat_with_exp(ideal(f),ideal(var(1)))[2]==0 || sat_with_exp(ideal(f),ideal(var(2)))[2]==0 )
+    int satx =sat_with_exp(ideal(f),ideal(var(1)))[2];
+    int saty =sat_with_exp(ideal(f),ideal(var(2)))[2];
+    if(satx==0 || saty==0)
     {
       list fact=factorize(g);
       for(int i=1;i<=size(fact[1]);i++)
       {
          int o=2;
+         int d=1;
          if(ord(fact[1][i])>0)
          {
            o=ord(fact[1][i]);
+           d=deg(fact[1][i]);
+         }
+         if(satx>1)
+         {
+          if(reduce(jet(fact[1][i],o),var(1))==0)
+          {
+            return(1);
+          }
+         }
+         if(saty>1)
+         {
+           if(reduce(jet(fact[1][i],o),var(2))==0)
+           {
+            return(1);
+          }
          }
          if(o>=1)
          {
@@ -3297,7 +4008,10 @@ static proc Test(poly f)
             }
             if(o==1)
             {
-              return(0);
+              if(d<>1)
+              {
+                return(0);
+              }
             }
          }
       }
@@ -3512,7 +4226,7 @@ static proc sym_reduce(matrix A)//shifted
 }
 
 
-static proc classifyNB(RightEquivalenceChainWithPrecision Tr, int flag, int flag2)
+static proc classifyNB(RightEquivalenceChainWithPrecision Tr, int flag, int flag2, int flag3)
 {
   def R=basering;
   /* Apply the Splitting Lemma */
@@ -3644,8 +4358,11 @@ static proc classifyNB(RightEquivalenceChainWithPrecision Tr, int flag, int flag
     }
     si=el;
     si2=el;
-    NP=newtonPolygon(F.value);
-    f1 = termsOnPolygon(F.value,NP);
+    if(phi1(g)<>0 && phi2(g)<>0)
+    {
+      NP=newtonPolygon(F.value);
+      f1 = termsOnPolygon(F.value,NP);
+    }
     int mu = 0;
     j = size(NP);
     /*Test whether the milnor number of jet(F.value,Delta_i) is finite for all the faces Delta_i of NP*/
@@ -3662,8 +4379,15 @@ static proc classifyNB(RightEquivalenceChainWithPrecision Tr, int flag, int flag
      }
      if(mu==0)
      {
+       if(flag==1)
+       {
+          mu =milnor(f1);
+          setring R;
+          return(list(mu,Tr,nv,H,TrMorse,1));
+       }
        /* Test conditions of Definition 17*/
-       for(i=1;i<=j;i++)
+       i=1;
+       while(i<=j)
        {
          if(basering<>RR)
          {
@@ -3675,24 +4399,22 @@ static proc classifyNB(RightEquivalenceChainWithPrecision Tr, int flag, int flag
          Delta[1]=NP[i];
          termsOnDelta = termsOnPolygon(f1,list(Delta[1]));
          PolyTermsOnDelta=sat_with_exp(termsOnDelta,ideal(var(1)*var(2)))[1][1];
-         if(Test(termsOnDelta[1])==0)
+         if(testNormalisationCondition(termsOnDelta[1])==0)
          {
-          if(flag==1)
-          {
-            mu =milnornumber(f1);
-            setring R;
-            return(list(mu,Tr,nv,H,TrMorse,1));
-          }
-           satTermsOnChooseFace = sat_with_exp(ideal(termsOnDelta),ideal(x*y))[1][1];
-           Tr=doWeightedLinearTransformationExt(satTermsOnChooseFace,Delta[1],Tr);
-           Tr = truncateAtHighestCorner(Tr,Tr.precision);
-           F = Tr.targetgerm;
-           def S = F.in;
-           setring S;
+             satTermsOnChooseFace = sat_with_exp(ideal(termsOnDelta),ideal(x*y))[1][1];
+             Tr=doWeightedLinearTransformationExt(satTermsOnChooseFace,Delta[1],Tr);
+             Tr = truncateAtHighestCorner(Tr,Tr.precision);
+             F = Tr.targetgerm;
+             def S = F.in;
+             setring S;
          }
+         if(j==1){break;}
+         i=i+(j-1);
        }
          poly g = F.value;
          NP=newtonPolygon(F.value);
+         if(flag3==1)
+        {
          poly f1 = termsOnPolygon(F.value,NP);
          list K = monomials(f1);
          for(int i = 1;i<=size(K);i++)
@@ -3751,25 +4473,21 @@ static proc classifyNB(RightEquivalenceChainWithPrecision Tr, int flag, int flag
              }
            }
          }
+       }
+       NP=newtonPolygon(F.value);
+       poly f1 = termsOnPolygon(F.value,NP);
+       int mu = milnor(f1);
+       if(mu<>-1){d2=mu;}else{d2=Tr.precision;}
          if(subst(g,var(1),0)==0)
          {
-           NP=newtonPolygon(F.value);
-           f1 = termsOnPolygon(F.value,NP);
-           int mu = milnor(f1);
-           if(mu<>-1){d2=mu;}else{d2=Tr.precision;}
            F.value=F.value+var(2)^(d2+1);
            Tr.targetgerm = F;
          }
          if(subst(g,var(2),0)==0)
          {
-            NP=newtonPolygon(F.value);
-            f1 = termsOnPolygon(F.value,NP);
-            int mu = milnor(f1);
-            if(mu<>-1){d2=mu;}else{d2=Tr.precision;}
             F.value=F.value+var(1)^(d2+1);
             Tr.targetgerm=F;
          }
-         mu =milnornumber(f1);
          setring R;
          return(list(mu,Tr,nv,H,TrMorse,0));
       }
