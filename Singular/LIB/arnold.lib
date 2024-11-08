@@ -2560,7 +2560,7 @@ example
 }
 
 proc determineNormalFormWithEqList(poly f)
-"USAGE: determineNormalFormEquationList(f); f poly
+"USAGE: determineNormalFormEqList(f); f poly
 RETURN: if f is right equivalent to a germ with a nondegenerate Newton boundary a list with entries:@*
         [1]: the embedding dimension (given as type int)@*
         [2]: the corank of the singularity defined by f (given as type int)@*
@@ -2662,7 +2662,7 @@ example
 }
 
 proc determineNormalFormWithEHList(poly f)
-"USAGE: determineNormalFormEquationList(f); f poly
+"USAGE: determineNormalFormWithEHList(f); f poly
 RETURN: if f is right equivalent to a germ with a nondegenerate Newton boundary a list with entries:@*
         [1]: the embedding dimension (given as type int)@*
         [2]: the corank of the singularity defined by f (given as type int)@*
@@ -2753,7 +2753,7 @@ example
 }
 
 proc determineNormalFormWithEqAndEHList(poly f)
-"USAGE: determineNormalFormEquationList(f); f poly
+"USAGE: determineNormalFormWithEqAndEHList(f); f poly
 RETURN: if f is right equivalent to a germ with a nondegenerate Newton boundary a list with entries:@*
         [1]: the embedding dimension (given as type int)@*
         [2]: the corank of the singularity defined by f (given as type int)@*
