@@ -1920,12 +1920,10 @@ BOOLEAN rHasSimpleOrder(const ring r)
 
 BOOLEAN rHasBlockOrder(const ring r)
 {
-  int blocks = rBlocks(r) - 1;
-  if (blocks <= 1) return FALSE;
-
+  if (r->order[0] == ringorder_s) return FALSE;
   int s=0;
   if ((r->order[0] == ringorder_c)
-  || (r->order[s] == ringorder_C)) s=1;
+  || (r->order[0] == ringorder_C)) s=1;
 
   if ((r->block0[s]!=1)||(r->block1[s]!=r->N))
     return TRUE;
