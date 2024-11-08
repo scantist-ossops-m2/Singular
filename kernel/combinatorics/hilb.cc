@@ -1603,7 +1603,7 @@ void HilbertSeries_OrbitData(ideal S, int lV, bool IG_CASE, bool mgrad, bool odp
     for(is = 0; is < lV; is++)
     {
       tt[is] = (char*)omAlloc(7*sizeof(char)); //if required enlarge it later
-      sprintf (tt[is], "t%d", is+1);
+      snprintf (tt[is],7, "t%d", is+1);
     }
     npar = lV;
   }

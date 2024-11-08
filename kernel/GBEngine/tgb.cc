@@ -2008,7 +2008,7 @@ export_mat (number * number_array, int pn, int tn, const char *format_str,
             int mat_nr)
 {
   char matname[20];
-  sprintf (matname, format_str, mat_nr);
+  snprintf (matname,20, format_str, mat_nr);
   FILE *out = fopen (matname, "w");
   int i, j;
   fprintf (out, "mat=[\n");

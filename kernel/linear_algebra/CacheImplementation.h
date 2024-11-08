@@ -3,7 +3,7 @@
 
 #include "reporter/reporter.h"
 
-#include <cstdio> // for sprintf
+#include <cstdio> // for snprintf
 #include <iostream>
 
 template<class KeyClass, class ValueClass>
@@ -357,13 +357,13 @@ std::string Cache<KeyClass, ValueClass>::toString() const
   char h[12]; /*max.int length +1 for \0 */
   std::string s = "Cache:";
   s += "\n   entries: ";
-  sprintf(h, "%d", getNumberOfEntries()); s += h;
+  snprintf(h,12, "%d", getNumberOfEntries()); s += h;
   s += " of at most ";
-  sprintf(h, "%d", getMaxNumberOfEntries()); s += h;
+  snprintf(h,12, "%d", getMaxNumberOfEntries()); s += h;
   s += "\n   weight: ";
-  sprintf(h, "%d", getWeight()); s += h;
+  snprintf(h,12, "%d", getWeight()); s += h;
   s += " of at most ";
-  sprintf(h, "%d", getMaxWeight()); s += h;
+  snprintf(h,12, "%d", getMaxWeight()); s += h;
   if (_key.size() == 0)
   {
     s += "\n   no pairs, i.e. cache is empty";
@@ -377,7 +377,7 @@ std::string Cache<KeyClass, ValueClass>::toString() const
     for (itKey = _key.begin(); itKey != _key.end(); itKey++)
     {
       s += "\n      ";
-      sprintf(h, "%d", k); s += h;
+      snprintf(h,12, "%d", k); s += h;
       s += ". ";
       s += itKey->toString();
       s += " --> ";
@@ -400,7 +400,7 @@ std::string Cache<KeyClass, ValueClass>::toString() const
          itValue++;
      }
      s += "\n      ";
-     sprintf(h, "%d", r); s += h;
+     snprintf(h,12, "%d", r); s += h;
      s += ". ";
      s += itKey->toString();
      s += " --> ";
