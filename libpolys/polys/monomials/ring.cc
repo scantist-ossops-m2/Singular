@@ -3223,6 +3223,23 @@ static void rOptimizeLDeg(ring r)
       r->pLDeg = pLDeg1c_WFirstTotalDegree;
   }
   r->pLDegOrig = r->pLDeg;
+  if (r->pFDeg == p_WTotaldegree)
+  { // only c,C,dp,lp,rp: use p_Totaldegree
+    int i=0;
+    loop
+    {
+      if ((r->order[i]!=ringorder_c)
+      && (r->order[i]!=ringorder_C)
+      && (r->order[i]!=ringorder_lp)
+      && (r->order[i]!=ringorder_rp)
+      && (r->order[i]!=ringorder_dp)
+      && (r->order[i]!=ringorder_Dp))
+        return;
+     i++;
+     if (r->order[i]==0) break;
+    }
+    r->pFDeg == p_Totaldegree;
+  }
 }
 
 // set pFDeg, pLDeg, requires OrdSgn already set
