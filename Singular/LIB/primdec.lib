@@ -3022,7 +3022,7 @@ static proc decomp_i(int patchPrimaryDecomposition, ideal i,list #)
     }
     else
     {
-      ideal @j=groebner(fetch(@P,i));
+      ideal @j=std(fetch(@P,i));
     }
     if(size(@j)==1)
     {
