@@ -71,11 +71,6 @@
 #include "kernel/GBEngine/ratgring.h"
 #endif
 
-#ifdef KDEBUG
-#undef KDEBUG
-#define KDEBUG 2
-#endif
-
 #ifdef DEBUGF5
 #undef DEBUGF5
 #define DEBUGF5 2
@@ -766,16 +761,17 @@ int kFindInTShift(poly p, kStrategy strat)
 #endif
 
 #ifdef KDEBUG
-
 void sTObject::wrp()
 {
   if (t_p != NULL) p_wrp(t_p, tailRing);
   else if (p != NULL) p_wrp(p, currRing, tailRing);
   else ::wrp(NULL);
 }
+#endif
 
 #define kFalseReturn(x) do { if (!x) return FALSE;} while (0)
 
+#ifdef KDEBUG
 // check that Lm's of a poly from T are "equal"
 static const char* kTest_LmEqual(poly p, poly t_p, ring tailRing)
 {
@@ -793,7 +789,9 @@ static const char* kTest_LmEqual(poly p, poly t_p, ring tailRing)
     return "Lm.coeff different";
   return NULL;
 }
+#endif
 
+#ifdef KDEBUG
 STATIC_VAR BOOLEAN sloppy_max = FALSE;
 BOOLEAN kTest_T(TObject * T, kStrategy strat, int i, char TN)
 {
@@ -919,7 +917,9 @@ BOOLEAN kTest_T(TObject * T, kStrategy strat, int i, char TN)
   }
   return TRUE;
 }
+#endif
 
+#ifdef KDEBUG
 BOOLEAN kTest_L(LObject *L, kStrategy strat,
                 BOOLEAN testp, int lpos, TSet T, int tlength)
 {
@@ -1005,7 +1005,9 @@ BOOLEAN kTest_L(LObject *L, kStrategy strat,
   }
   return TRUE;
 }
+#endif
 
+#ifdef KDEBUG
 BOOLEAN kTest (kStrategy strat)
 {
   int i;
@@ -1048,7 +1050,9 @@ BOOLEAN kTest (kStrategy strat)
 
   return TRUE;
 }
+#endif
 
+#ifdef KDEBUG
 BOOLEAN kTest_S(kStrategy strat)
 {
   int i;
@@ -1064,9 +1068,9 @@ BOOLEAN kTest_S(kStrategy strat)
   }
   return ret;
 }
+#endif
 
-
-
+#ifdef KDEBUG
 BOOLEAN kTest_TS(kStrategy strat)
 {
   int i, j;
@@ -1127,7 +1131,6 @@ BOOLEAN kTest_TS(kStrategy strat)
   }
   return TRUE;
 }
-
 #endif // KDEBUG
 
 /*2
@@ -7307,8 +7310,8 @@ poly redtailBba_Z (LObject* L, int end_pos, kStrategy strat )
       // we are in Z, do not call pNorm
       strat->redTailChange=TRUE;
       // test divisibility of coefs:
-      poly p_Ln=Ln.GetLmCurrRing();
-      poly p_With=With->GetLmCurrRing();
+      Ln.GetLmCurrRing();
+      With->GetLmCurrRing();
 
       if (ksReducePolyTail_Z(L, With, &Ln))
       {
@@ -9827,7 +9830,9 @@ void initBuchMora (ideal F,ideal Q,kStrategy strat)
     if (strat->fromQ!=NULL) omFreeSize(strat->fromQ,IDELEMS(strat->Shdl)*sizeof(int));
     strat->fromQ=NULL;
   }
+  #ifdef KDEBUG
   assume(kTest_TS(strat));
+  #endif
 }
 
 void exitBuchMora (kStrategy strat)
@@ -10982,8 +10987,10 @@ BOOLEAN kStratChangeTailRing(kStrategy strat, LObject *L, TObject* T, unsigned l
 
   if (TEST_OPT_PROT)
     Print("[%lu:%d", (unsigned long) new_tailRing->bitmask, new_tailRing->ExpL_Size);
+  #ifdef KDEBUG
   kTest_TS(strat);
   assume(new_tailRing != strat->tailRing);
+  #endif
   pShallowCopyDeleteProc p_shallow_copy_delete
     = pGetShallowCopyDeleteProc(strat->tailRing, new_tailRing);
 
@@ -11040,7 +11047,9 @@ BOOLEAN kStratChangeTailRing(kStrategy strat, LObject *L, TObject* T, unsigned l
     strat->t_kNoether=k_LmInit_currRing_2_tailRing(strat->kNoether, new_tailRing);
   }
 
+  #ifdef KDEBUG
   kTest_TS(strat);
+  #endif
   if (TEST_OPT_PROT)
     PrintS("]");
   return TRUE;

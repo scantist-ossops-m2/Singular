@@ -2649,7 +2649,9 @@ ideal bba (ideal F, ideal Q,intvec *w,bigintmat *hilb,kStrategy strat)
     withT = ! strat->homog;
 
   // strat->posInT = posInT_pLength;
+  #ifdef KDEBUG
   kTest_TS(strat);
+  #endif
 
 #ifdef HAVE_TAIL_RING
   if(!idIs0(F) &&(!rField_is_Ring(currRing)))  // create strong gcd poly computes with tailring and S[i] ->to be fixed
@@ -2882,8 +2884,8 @@ ideal bba (ideal F, ideal Q,intvec *w,bigintmat *hilb,kStrategy strat)
 
 #ifdef KDEBUG
     strat->P.Init();
-#endif /* KDEBUG */
     kTest_TS(strat);
+#endif /* KDEBUG */
   }
 #ifdef KDEBUG
   if (TEST_OPT_DEBUG) messageSets(strat);
