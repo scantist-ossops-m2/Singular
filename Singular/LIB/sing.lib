@@ -339,7 +339,7 @@ EXAMPLE: example nf_icis; shows an example
    }
 //------------ produce generic linear combinations of generators --------------
    int prob;
-   while ( sum(sl) != 0 )
+   while ( sum(sl) > 0 )
    {  prob=prob+1;
       p=p-25; b=b+10;
       i = genericid(i,p,b);          // proc genericid from random.lib
