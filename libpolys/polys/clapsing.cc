@@ -1663,6 +1663,7 @@ matrix singclap_irrCharSeries ( ideal I, const ring r)
 
 char* singclap_neworder ( ideal I, const ring r)
 {
+  if(idIs0(I)) return rVarStr(r);
   int i;
   Off(SW_RATIONAL);
   On(SW_SYMMETRIC_FF);
