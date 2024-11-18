@@ -30,10 +30,12 @@ PROCEDURES:
  primdecGTZE(I);    complete primary decomposition via Gianni,Trager,Zacharias. Returns empty list for the unit ideal
  primdecSY(I...);   complete primary decomposition via Shimoyama-Yokoyama
  primdecSYE(I,..);  complete primary decomposition via Shimoyama-Yokoyama. Returns empty list for the unit ideal
+ primdec(I);        wrapper for primdecGTZ and primdecSY
  minAssGTZ(I);      the minimal associated primes via Gianni,Trager,Zacharias (with modifications by Laplagne)
  minAssGTZE(I);     the minimal associated primes via Gianni,Trager,Zacharias. Returns empty list for unit ideal
  minAssChar(I...);  the minimal associated primes using characteristic sets
  minAssCharE(I..);  the minimal associated primes using characteristic sets. Returns empty list for unit ideal
+ minAss(I);         wrapper for minAssGTZ and minAssChar
  testPrimary(L,k);  tests the result of the primary decomposition
  testPrimaryE(L,k); tests the result of the primary decomposition. Handles also empty list L.
  radical(I);        computes the radical of I via Krick/Logar (with modifications by Laplagne) and Kemper
@@ -3198,6 +3200,7 @@ static proc decomp_i(int patchPrimaryDecomposition, ideal i,list #)
       map sigma,invsigma;
       ideal II,jmap,IItmp;
       nn=nvars(basering);
+      int random_int;
       for(ab=1;ab<=size(primary) div 2;ab++)
       {
         II=primary[2*ab];
@@ -3210,14 +3213,16 @@ static proc decomp_i(int patchPrimaryDecomposition, ideal i,list #)
         }
         else
         {
-          invsigma=basering,maxideal(1);
+          random_int=0;
           while(1)
           {
-            jmap=randomLast(50);
+            if (random_int==0) {jmap=maxideal(1);}
+            else               {jmap=randomLast(2*random_int);}
+            random_int++;
             sigma=basering,jmap;
             jmap[nn]=2*var(nn)-jmap[nn];
             invsigma=basering,jmap;
-            IItmp=groebner(sigma(II));
+            IItmp=std(sigma(II));
             if (deg(IItmp[1]) == vdim(IItmp))
             {
               II=IItmp;
@@ -3311,6 +3316,7 @@ static proc decomp_i(int patchPrimaryDecomposition, ideal i,list #)
   poly @p,@q;
   ideal @h,fac,ser;
   ideal @Ptest=1;
+  int random_int;
   di=dim(jwork);
   keepdi=di;
 
@@ -3426,18 +3432,22 @@ static proc decomp_i(int patchPrimaryDecomposition, ideal i,list #)
         map sigma;
         nn=nvars(basering);
         map invsigma=basering,maxideal(1);
+        random_int=0;
         for(ab=1;ab<=size(uprimary) div 2;ab++)
         {
           II=uprimary[2*ab];
           attrib(II,"isSB",1);
           IItmp=II;
+          random_int=0;
           while(deg(II[1])!=vdim(II))
           {
-            jmap=randomLast(50);
+            if (random_int==0) {jmap=maxideal(1);}
+            else               {jmap=randomLast(2*random_int);}
+            random_int++;
             sigma=basering,jmap;
             jmap[nn]=2*var(nn)-jmap[nn];
             invsigma=basering,jmap;
-            II=groebner(sigma(IItmp));
+            II=std(sigma(IItmp));
           }
           absprimarytmp[ab]= absFactorize(II[1],77);
           II=var(nn);
@@ -8640,7 +8650,7 @@ NOTE:    Designed for characteristic 0, works also in char k > 0 based
 EXAMPLE: example minAssE; shows an example
 "
 {
- return(minAss_i(1,I,#));
+ return(minAssGTZ_i(1,I,#));
 }
 example
 { "EXAMPLE:";  echo = 2;
@@ -8654,36 +8664,6 @@ example
    list prempty = minAssE(j);
    prempty;
 }
-
-proc minAss(ideal I,list #)
-"USAGE:   minAss(I[, l]); I ideal, l list (optional) of parameters, same as minAssGTZ
-RETURN:  a list, the minimal associated prime ideals of I. If I is the unit ideal, returns list(ideal(1));
-NOTE:    Designed for characteristic 0, works also in char k > 0 based
-         on an algorithm of Yokoyama
-EXAMPLE: example minAss; shows an example
-"
-{
-    return(minAss_i(0,I,#));
-}
-example
-{ "EXAMPLE:";  echo = 2;
-   ring  r = 0, (x, y, z), dp;
-   poly  p = z2 + 1;
-   poly  q = z3 + 2;
-   ideal i = p * q^2, y - z2;
-   list pr = minAss(i);
-   pr;
-}
-
-static proc minAss_i(int patchPrimaryDecomposition,ideal I,list #)
-{
-//         if patchPrimaryDecomposition=1,  drop the unit ideal in the decomposition,
-//         since the unit ideal it is not prime, otherwise take no special action.
-//         For other parameters see 'minAss' or 'minAssE'
-  return(minAssGTZ_i(patchPrimaryDecomposition,I,#));
-}
-
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -9287,6 +9267,57 @@ static proc prep_decomp(alias ideal I)
     NN++;
   }
   return(list(I));
+}
+
+proc minAss(ideal I)
+"USAGE:    minAss(I);
+RETURN:  a list, the minimal associated prime ideals of proper ideal I, otherwise ideal(1)
+NOTE:    a wrapper for trying both: minAssGTZ and minAssChar
+EXAMPLE: example minAss; shows an example
+"
+{
+  link GTZ="ssi:fork";
+  link SY="ssi:fork";
+  write(GTZ,quote(minAssGTZ(I)));
+  write(SY,quote(minAssChar(I)));
+  list L=GTZ,SY;
+  int f=waitfirst(L);
+  list res=read(L[f]);
+  close(GTZ);
+  close(SY);
+  return(res);
+}
+example
+{ "EXAMPLE:";  echo = 2;
+   ring  r = 0,(x,y,z),dp;
+   poly  p = z2+1;
+   poly  q = z3+2;
+   ideal i = p*q^2,y-z2;
+   list pr = minAss(i);
+   pr;
+}
+
+proc primdec(ideal I)
+"USAGE:   primdec(I); I ideal
+RETURN:  a list pr of primary ideals and their associated primes for a proper ideal I, otherwise pr = list( list( ideal(1), ideal(1) )
+@format
+   pr[i][1]   the i-th primary component,
+   pr[i][2]   the i-th prime component.
+@end format
+NOTE: wrapper for trying both: primdecGTZ and primdecSY
+EXAMPLE: example primdec; shows an example
+"
+{
+  link GTZ="ssi:fork";
+  link SY="ssi:fork";
+  write(GTZ,quote(primdecGTZ(I)));
+  write(SY,quote(primdecSY(I)));
+  list L=GTZ,SY;
+  int f=waitfirst(L);
+  list res=read(L[f]);
+  close(GTZ);
+  close(SY);
+  return(res);
 }
 
 ////////////////////////////////////////////////////////////////////////////
