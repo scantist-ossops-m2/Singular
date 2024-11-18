@@ -9283,6 +9283,11 @@ EXAMPLE: example minAss; shows an example
   list L=GTZ,SY;
   int f=waitfirst(L);
   list res=read(L[f]);
+  if(find(option(),"prot"))
+  {
+    if(f==1) { "computation via minAssGTZ";}
+    else     { "computation via minAssChar"};
+  }
   close(GTZ);
   close(SY);
   return(res);
@@ -9315,6 +9320,11 @@ EXAMPLE: example primdec; shows an example
   list L=GTZ,SY;
   int f=waitfirst(L);
   list res=read(L[f]);
+  if(find(option(),"prot"))
+  {
+    if(f==1) { "computation via primdecGTZ";}
+    else     { "computation via primdecSY"};
+  }
   close(GTZ);
   close(SY);
   return(res);
