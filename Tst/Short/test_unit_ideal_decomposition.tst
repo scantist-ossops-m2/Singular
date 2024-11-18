@@ -76,7 +76,7 @@ proc minAssPrimesOldNew  (I)        {    return ( Primdec::minAssPrimesoldE(I) )
 proc minAssPrimesOldOrig (I)        {    return ( Primdec::minAssPrimesold (I) );    }
 
 proc minAssNew  (I)                 {    return ( Primdec::minAssE(I) );             }
-proc minAssOrig (I)                 {    return ( Primdec::minAss (I) );             }
+proc minAssOrig (I)                 {    return ( Primdec::minAssGTZ(I) );             }
 
 
 proc minAssPrimCharsetsECurrentOrd(I)    {    return ( Primdec::min_ass_prim_charsets_i( int(1),I,0)) ; }
