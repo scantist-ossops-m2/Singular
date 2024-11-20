@@ -958,9 +958,7 @@ ideal  id_Mult (ideal h1,ideal  h2, const ring R)
 /// returns true if h is the zero ideal
 BOOLEAN idIs0 (ideal h)
 {
-  assume (h != NULL); // will fail :(
-
-  if (h->m!=NULL)
+  if ((h!=NULL) && (h->m!=NULL))
   {
     for( int i = IDELEMS(h)-1; i >= 0; i-- )
       if(h->m[i] != NULL)
