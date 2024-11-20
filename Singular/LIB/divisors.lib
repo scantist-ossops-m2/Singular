@@ -40,7 +40,7 @@ makeDivisor(ideal,ideal)                        create a divisor
 divisorplus(divisor,divisor)                    add two divisors
 multdivisor(int,divisor)                        multiply a divisor by an integer
 negativedivisor(divisor)                        compute the negative of the divisor
-normalForm(divisor)                             normal form of a divisor
+normalFormDivisor(divisor)                      normal form of a divisor
 isEqualDivisor(divisor,divisor)                 test whether two divisors are equal
 globalSections(divisor)                         compute the global sections of a divisor
 degreeDivisor(divisor)                          degree of a divisor
@@ -251,13 +251,13 @@ D;
 }
 
 
-proc normalForm(divisor A)
-"USAGE:  normalForm(A); A = divisor.@*
+proc normalFormDivisor(divisor A)
+"USAGE:  normalFormDivisor(A); A = divisor.@*
 ASSUME:  A is a divisor on X.
 RETURN:  different representative of the same divisor on X
 THEORY:  The procedure will cancel common components of numerator and denominator.
 KEYWORDS: divisors
-EXAMPLE: example normalForm; shows an example
+EXAMPLE: example normalFormDivisor; shows an example
 "
 {
 divisor B;
@@ -274,7 +274,7 @@ divisor A = makeDivisor(ideal(x,z),ideal(1));
 divisor B = makeDivisor(ideal(x,y),ideal(1));
 divisor D = (A+B)+multdivisor(-1,B);
 D;
-normalForm(D);
+normalFormDivisor(D);
 }
 
 
@@ -294,8 +294,8 @@ KEYWORDS: divisors
 EXAMPLE: example isEqualDivisor; shows an example
 "
 {
-A=normalForm(A);
-B=normalForm(B);
+A=normalFormDivisor(A);
+B=normalFormDivisor(B);
 return((isEqualIdeal(A.num,B.num)) && (isEqualIdeal(A.den,B.den)));
 }
 example
@@ -387,7 +387,7 @@ KEYWORDS: divisors
 EXAMPLE: example linearlyEquivalent; shows an example
 "
 {
-divisor F = normalForm(divisorplus(A,negativedivisor(B)));
+divisor F = normalFormDivisor(divisorplus(A,negativedivisor(B)));
 list LB = globalSections(F);
 if (size(LB[1])!=1) {return(0);}
 ideal V = sectionIdeal(LB[1][1,1],LB[2],F);
