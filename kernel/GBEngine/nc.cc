@@ -17,7 +17,7 @@
 
 ideal twostd(ideal I) // works in currRing only!
 {
-  ideal J = kStd(I, currRing->qideal, testHomog, NULL, NULL, 0, 0, NULL); // in currRing!!!
+  ideal J = kStd(I, currRing->qideal, testHomog, NULL, (bigintmat*)NULL, 0, 0, NULL); // in currRing!!!
   idSkipZeroes(J); // ring independent!
 
   const int rN = currRing->N;
@@ -174,7 +174,7 @@ ideal twostd(ideal I) // works in currRing only!
     BITSET save1;
     SI_SAVE_OPT1(save1);
     si_opt_1|=Sy_bit(OPT_SB_1); // ring independent
-    J = kStd(id_tmp, currRing->qideal, testHomog, NULL, NULL, 0, iSize); // J = J + K, J - std // in currRing!
+    J = kStd(id_tmp, currRing->qideal, testHomog, NULL, (bigintmat*)NULL, 0, iSize); // J = J + K, J - std // in currRing!
     SI_RESTORE_OPT1(save1);
 #else
     J=kStd(id_tmp, currRing->qideal,testHomog,NULL,NULL,0,0,NULL);
@@ -253,7 +253,7 @@ ideal Approx_Step(ideal L)
   int i,j; // k=syzcomp
   int flag, flagcnt=0, syzcnt=0;
   int syzcomp = 0;
-  ideal I = kStd(L, currRing->qideal,testHomog,NULL,NULL,0,0,NULL);
+  ideal I = kStd(L, currRing->qideal,testHomog,NULL,(bigintmat*)NULL,0,0,NULL);
   idSkipZeroes(I);
   ideal s_I;
   int idI = idElem(I);
@@ -340,7 +340,7 @@ ideal Approx_Step(ideal L)
       s_h2=idCopy(s_h3);
       idDelete(&s_h3);
       PrintS("...computing Syz");
-      s_h3 = kStd(s_h2, currRing->qideal,(tHomog)FALSE,NULL,NULL,syzcomp,idI);
+      s_h3 = kStd(s_h2, currRing->qideal,(tHomog)FALSE,NULL,(bigintmat*)NULL,syzcomp,idI);
       SI_RESTORE_OPT1(save1);
       //idShow(s_h3);
       if (orig_ring != syz_ring)
@@ -364,7 +364,7 @@ ideal Approx_Step(ideal L)
         rDelete(syz_ring);
       }
       idTest(s_h3);
-      S[syzcnt]=kStd(s_h3,currRing->qideal,(tHomog)FALSE,NULL,NULL);
+      S[syzcnt]=kStd(s_h3,currRing->qideal,(tHomog)FALSE,NULL,(bigintmat*)NULL);
       syzcnt++;
       idDelete(&s_h3);
     } // end if flag >0
@@ -403,7 +403,7 @@ ideal Approx_Step(ideal L)
       res->m[i-1]=p;
     }
     PrintS("final std");
-    res = kStd(res, currRing->qideal,testHomog,NULL,NULL,0,0,NULL);
+    res = kStd(res, currRing->qideal,testHomog,NULL,(bigintmat*)NULL,0,0,NULL);
     idSkipZeroes(res);
     return(res);
   }

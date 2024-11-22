@@ -10589,7 +10589,7 @@ poly preIntegerCheck(const ideal Forig, const ideal Q)
     II->m[j++] = prMapR(F->m[i], nMap, origR, QQ_ring);
   for(int i = 0, j = IDELEMS(F); i<idelemQ; i++)
     II->m[j++] = prMapR(Q->m[i], nMap, origR, QQ_ring);
-  ideal one = kStd(II, NULL, isNotHomog, NULL);
+  ideal one = kStd(II, NULL, isNotHomog, NULL,(bigintmat*)NULL);
   idSkipZeroes(one);
   if(idIsConstant(one))
   {

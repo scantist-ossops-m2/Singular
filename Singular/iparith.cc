@@ -3519,7 +3519,7 @@ static BOOLEAN jjSTD_1(leftv res, leftv u, leftv v)
     si_opt_1|=Sy_bit(OPT_SB_1);
     /* ii1 appears to be the position of the first element of il that
        does not belong to the old SB ideal */
-    result=kStd(i1,currRing->qideal,hom,&w,NULL,0,ii1);
+    result=kStd(i1,currRing->qideal,hom,&w,(bigintmat*)NULL,0,ii1);
     SI_RESTORE_OPT1(save1);
     idDelete(&i1);
     idSkipZeroes(result);
@@ -3555,7 +3555,7 @@ static BOOLEAN jjSTD_1(leftv res, leftv u, leftv v)
     si_opt_1|=Sy_bit(OPT_SB_1);
     /* ii1 appears to be the position of the first element of i1 that
      does not belong to the old SB ideal */
-    result=kStd(i1,currRing->qideal,hom,&w,NULL,0,ii1);
+    result=kStd(i1,currRing->qideal,hom,&w,(bigintmat*)NULL,0,ii1);
     SI_RESTORE_OPT1(save1);
     idDelete(&i1);
     idSkipZeroes(result);
@@ -5085,7 +5085,7 @@ static BOOLEAN jjSBA(leftv res, leftv v)
       w=ivCopy(w);
     }
   }
-  result=kSba(v_id,currRing->qideal,hom,&w,1,0);
+  result=kSba(v_id,currRing->qideal,hom,&w,1,0,(bigintmat*)NULL);
   idSkipZeroes(result);
   res->data = (char *)result;
   if(!TEST_OPT_DEGBOUND) setFlag(res,FLAG_STD);
@@ -5111,7 +5111,7 @@ static BOOLEAN jjSBA_1(leftv res, leftv v, leftv u)
       w=ivCopy(w);
     }
   }
-  result=kSba(v_id,currRing->qideal,hom,&w,(int)(long)u->Data(),0);
+  result=kSba(v_id,currRing->qideal,hom,&w,(int)(long)u->Data(),0,(bigintmat*)NULL);
   idSkipZeroes(result);
   res->data = (char *)result;
   if(!TEST_OPT_DEGBOUND) setFlag(res,FLAG_STD);
@@ -5137,7 +5137,7 @@ static BOOLEAN jjSBA_2(leftv res, leftv v, leftv u, leftv t)
       w=ivCopy(w);
     }
   }
-  result=kSba(v_id,currRing->qideal,hom,&w,(int)(long)u->Data(),(int)(long)t->Data());
+  result=kSba(v_id,currRing->qideal,hom,&w,(int)(long)u->Data(),(int)(long)t->Data(),(bigintmat*)NULL);
   idSkipZeroes(result);
   res->data = (char *)result;
   if(!TEST_OPT_DEGBOUND) setFlag(res,FLAG_STD);
@@ -5165,7 +5165,7 @@ static BOOLEAN jjSTD(leftv res, leftv v)
       w=ivCopy(w);
     }
   }
-  result=kStd(v_id,currRing->qideal,hom,&w);
+  result=kStd(v_id,currRing->qideal,hom,&w,(bigintmat*)NULL);
   idSkipZeroes(result);
   res->data = (char *)result;
   if(!TEST_OPT_DEGBOUND) setFlag(res,FLAG_STD);
@@ -5383,7 +5383,7 @@ static BOOLEAN jjRIGHTSTD(leftv res, leftv v)
     ring Aopp = rOpposite(A);
     currRing = Aopp;
     ideal Iopp = idOppose(A, I, Aopp);
-    ideal Jopp = kStd(Iopp,currRing->qideal,testHomog,NULL);
+    ideal Jopp = kStd(Iopp,currRing->qideal,testHomog,NULL,(bigintmat*)NULL);
     currRing = A;
     ideal J = idOppose(Aopp, Jopp, A);
 

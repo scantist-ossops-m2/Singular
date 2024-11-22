@@ -935,7 +935,7 @@ static ideal MstdCC(ideal G)
   BITSET save1,save2;
   SI_SAVE_OPT(save1,save2);
   si_opt_1|=(Sy_bit(OPT_REDTAIL)|Sy_bit(OPT_REDSB));
-  ideal G1 = kStd(G, NULL, testHomog, NULL);
+  ideal G1 = kStd(G, NULL, testHomog, NULL,(bigintmat*)NULL);
   SI_RESTORE_OPT(save1,save2);
 
   idSkipZeroes(G1);
@@ -950,7 +950,7 @@ static ideal MstdhomCC(ideal G)
   BITSET save1,save2;
   SI_SAVE_OPT(save1,save2);
   si_opt_1|=(Sy_bit(OPT_REDTAIL)|Sy_bit(OPT_REDSB));
-  ideal G1 = kStd(G, NULL, isHomog, NULL);
+  ideal G1 = kStd(G, NULL, isHomog, NULL,(bigintmat*)NULL);
   SI_RESTORE_OPT(save1,save2);
 
   idSkipZeroes(G1);
@@ -5482,7 +5482,7 @@ ideal Mwalk(ideal Go, intvec* orig_M, intvec* target_M,
     M=kStd(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
     delete hilb_func;
 #else
-    M = kStd(Gomega1,NULL,testHomog,NULL,NULL,0,0,NULL);
+    M = kStd(Gomega1,NULL,testHomog,NULL,(bigintmat*)NULL,0,0,NULL);
 #endif
 #ifdef TIME_TEST
     tstd = tstd + clock() - to;
@@ -5768,7 +5768,7 @@ ideal Mrwalk(ideal Go, intvec* orig_M, intvec* target_M, int weight_rad, int per
     M=kStd(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
     delete hilb_func;
 #else
-    M = kStd(Gomega1,NULL,testHomog,NULL,NULL,0,0,NULL);
+    M = kStd(Gomega1,NULL,testHomog,NULL,(bigintmat*)NULL,0,0,NULL);
 #endif
 #ifdef TIME_TEST
     tstd = tstd + clock() - to;

@@ -30,6 +30,8 @@ New libraries:
 Changed libraries:
 @itemize
 @item @code{polyclass.lib}: extended (@nref{polyclass_lib})
+@item @code{primdec.lib}: choice of random values, irreducibility test
+(@nref{primdec_lib})
 @end itemize
 
 Changes in the kernel/build system:

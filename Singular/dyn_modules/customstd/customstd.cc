@@ -176,7 +176,7 @@ static BOOLEAN std_print_spoly(leftv res, leftv args)
     {
       si_filename=(char*)args->next->Data();
       ideal I=(ideal)args->Data();
-      I=kStd(I,currRing->qideal,testHomog,NULL,NULL,0,0,NULL,print_spoly);
+      I=kStd(I,currRing->qideal,testHomog,NULL,(bigintmat*)NULL,0,0,NULL,print_spoly);
       idSkipZeroes(I);
       res->rtyp=IDEAL_CMD;
       res->data=(char*)I;
@@ -468,7 +468,7 @@ static BOOLEAN monomialabortstd(leftv res, leftv args)
     if ((args->Typ()==IDEAL_CMD) && (args->next==NULL))
     {
       ideal I=(ideal)args->Data();
-      I=kStd(I,currRing->qideal,testHomog,NULL,NULL,0,0,NULL,abort_if_monomial_sp);
+      I=kStd(I,currRing->qideal,testHomog,NULL,(bigintmat*)NULL,0,0,NULL,abort_if_monomial_sp);
       idSkipZeroes(I);
       res->rtyp=IDEAL_CMD;
       res->data=(char*)I;

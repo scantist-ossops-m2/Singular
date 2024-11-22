@@ -370,7 +370,7 @@ static ideal idMake(std::vector<std::vector<int> > vecs)
 //the quotient ring of h1 respect to h2
 static ideal idmodulo(ideal h1,ideal h2)
 {
-  ideal gb=kStd(h2,NULL,testHomog,NULL,NULL,0,0,NULL);
+  ideal gb=kStd(h2,NULL,testHomog,NULL,(bigintmat*)NULL,0,0,NULL);
   idSkipZeroes(gb);
   ideal idq=kNF(gb,NULL,h1);
   idSkipZeroes(idq);

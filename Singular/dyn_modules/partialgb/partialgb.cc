@@ -25,7 +25,7 @@ static ideal idPartialGB (ideal  h1, int k)
     s_h1 = h1;
   }
 
-  ideal s_h3=kStd(s_h1,NULL,testHomog,&w,NULL,k);
+  ideal s_h3=kStd(s_h1,NULL,testHomog,&w,(bigintmat*)NULL,k);
 
   if (s_h3==NULL)
   {

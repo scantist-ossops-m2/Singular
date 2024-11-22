@@ -61,7 +61,8 @@ std::pair<ideal,ring> flip(const ideal I, const ring r,
   intvec* nullVector = NULL;
   ring origin = currRing;
   rChangeCurrRing(sAdjusted);
-  ideal inIsAdjustedGB = kStd(inIsAdjusted,currRing->qideal,testHomog,&nullVector);
+  ideal inIsAdjustedGB = kStd(inIsAdjusted,currRing->qideal,testHomog,&nullVector,
+  (bigintmat*)NULL);
   ideal IsAdjustedGB = lift(I,r,inIsAdjustedGB,sAdjusted);
   id_Delete(&inIsAdjusted,sAdjusted);
   id_Delete(&inIsAdjustedGB,sAdjusted);

@@ -38,8 +38,14 @@ ideal idDivRem(ideal A, const ideal quot, ideal &factor,ideal *unit,int lazyRedu
 
 /// NOTE: this is just a wrapper which sets currRing for the actual kNF call
 poly k_NF (ideal F, ideal Q, poly p,int syzComp, int lazyReduce, const ring _currRing);
+ideal kSba(ideal F,ideal Q, tHomog h, intvec ** mw, int incremental=0, int arri=0, intvec *hilb=NULL,
+          int syzComp=0,int newIdeal=0, intvec *vw=NULL);
+
 ideal kSba(ideal F,ideal Q, tHomog h, intvec ** mw, int incremental=0, int arri=0, bigintmat *hilb=NULL,
           int syzComp=0,int newIdeal=0, intvec *vw=NULL);
+
+ideal kStd(ideal F, ideal Q, tHomog h, intvec ** mw,intvec *hilb=NULL,
+          int syzComp=0,int newIdeal=0, intvec *vw=NULL, s_poly_proc_t sp=NULL);
 
 ideal kStd(ideal F, ideal Q, tHomog h, intvec ** mw,bigintmat *hilb=NULL,
           int syzComp=0,int newIdeal=0, intvec *vw=NULL, s_poly_proc_t sp=NULL);
