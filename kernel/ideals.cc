@@ -72,7 +72,7 @@ ideal idMinBase (ideal h1, ideal *SB)
     }
     else
     {
-      ideal re=kMin_std(h1,currRing->qideal,(tHomog)homog,&wth,h2,NULL,0,3);
+      ideal re=kMin_std(h1,currRing->qideal,(tHomog)homog,&wth,h2,(bigintmat*)NULL,0,3);
       idDelete(&re);
       return h2;
     }
@@ -257,7 +257,7 @@ static ideal idGroebner(ideal temp,int syzComp,GbVariant alg, bigintmat* hilb=NU
   else if (alg==GbSba)
   {
     if (TEST_OPT_PROT) { PrintS("sba:"); mflush(); }
-    res = kSba(temp,currRing->qideal,hom,&w,1,0,(bigintmat*)NULL);
+    res = kSba(temp,currRing->qideal,hom,&w,1,0,NULL);
     if (w!=NULL) delete w;
   }
   else if (alg==GbStdSat)

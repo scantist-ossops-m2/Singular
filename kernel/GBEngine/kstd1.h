@@ -38,8 +38,6 @@ ideal idDivRem(ideal A, const ideal quot, ideal &factor,ideal *unit,int lazyRedu
 
 /// NOTE: this is just a wrapper which sets currRing for the actual kNF call
 poly k_NF (ideal F, ideal Q, poly p,int syzComp, int lazyReduce, const ring _currRing);
-ideal kSba(ideal F,ideal Q, tHomog h, intvec ** mw, int incremental=0, int arri=0, intvec *hilb=NULL,
-          int syzComp=0,int newIdeal=0, intvec *vw=NULL);
 
 ideal kSba(ideal F,ideal Q, tHomog h, intvec ** mw, int incremental=0, int arri=0, bigintmat *hilb=NULL,
           int syzComp=0,int newIdeal=0, intvec *vw=NULL);
@@ -83,7 +81,10 @@ long  kHomModDeg(poly p, const ring r = currRing);
 ideal stdred(ideal F, ideal Q, tHomog h,intvec ** w);
 
 ideal kMin_std(ideal F, ideal Q, tHomog h,intvec ** w, ideal &M,
-              bigintmat *hilb=NULL, int syzComp=0,int reduced=0);
+              bigintmat *hilb, int syzComp=0,int reduced=0);
+
+ideal kMin_std(ideal F, ideal Q, tHomog h,intvec ** w, ideal &M,
+              intvec *hilb, int syzComp=0,int reduced=0);
 
 BOOLEAN kVerify(ideal F,ideal Q);
 

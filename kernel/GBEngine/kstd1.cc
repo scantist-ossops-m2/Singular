@@ -2968,26 +2968,6 @@ ideal kSba(ideal F, ideal Q, tHomog h,intvec ** w, int sbaOrder, int arri, bigin
   }
 }
 
-ideal kSba(ideal F, ideal Q, tHomog h,intvec ** w, int sbaOrder, int arri, intvec *hilb,int syzComp,
-          int newIdeal, intvec *vw)
-{
-  bigintmat *hh=NULL;
-  if (hilb!=NULL)
-  {
-    int l=hilb->rows();
-    hh=new bigintmat(1,l,coeffs_BIGINT);
-    for(int i=0;i<l;i++)
-    {
-      number tp = n_Init((*hilb)[i], coeffs_BIGINT);
-      n_Delete(&BIMATELEM((*hh),1,i+1), coeffs_BIGINT);
-      BIMATELEM((*hh),1,i+1)=tp;
-    }
-  }
-  ideal res=kSba(F,Q,h,w,sbaOrder,arri,hh,syzComp,newIdeal,vw);
-  if (hh!=NULL) delete hh;
-  return res;
-}
-
 #ifdef HAVE_SHIFTBBA
 ideal kStdShift(ideal F, ideal Q, tHomog h,intvec ** w, bigintmat *hilb,int syzComp,
                 int newIdeal, intvec *vw, BOOLEAN rightGB)
@@ -3246,6 +3226,25 @@ ideal kMin_std(ideal F, ideal Q, tHomog h,intvec ** w, ideal &M, bigintmat *hilb
   return r;
 }
 
+ideal kMin_std(ideal F, ideal Q, tHomog h,intvec ** w, ideal &M, intvec *hilb,
+              int syzComp, int reduced)
+{
+  bigintmat *hh=NULL;
+  if (hilb!=NULL)
+  {
+    int l=hilb->rows();
+    hh=new bigintmat(1,l,coeffs_BIGINT);
+    for(int i=0;i<l;i++)
+    {
+      number tp = n_Init((*hilb)[i], coeffs_BIGINT);
+      n_Delete(&BIMATELEM((*hh),1,i+1), coeffs_BIGINT);
+      BIMATELEM((*hh),1,i+1)=tp;
+    }
+  }
+  ideal res=kMin_std(F,Q,h,w,M,hh,syzComp,reduced);
+  if (hh!=NULL) delete hh;
+  return res;
+}
 poly kNF(ideal F, ideal Q, poly p,int syzComp, int lazyReduce)
 {
   if (p==NULL)

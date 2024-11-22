@@ -4714,7 +4714,7 @@ static BOOLEAN jjMSTD(leftv res, leftv v)
 {
   int t=v->Typ();
   ideal r,m;
-  r=kMin_std((ideal)v->Data(),currRing->qideal,testHomog,NULL,m);
+  r=kMin_std((ideal)v->Data(),currRing->qideal,testHomog,NULL,m,(bigintmat*)NULL);
   lists l=(lists)omAllocBin(slists_bin);
   l->Init(2);
   l->m[0].rtyp=t;
@@ -5085,7 +5085,7 @@ static BOOLEAN jjSBA(leftv res, leftv v)
       w=ivCopy(w);
     }
   }
-  result=kSba(v_id,currRing->qideal,hom,&w,1,0,(bigintmat*)NULL);
+  result=kSba(v_id,currRing->qideal,hom,&w,1,0,NULL);
   idSkipZeroes(result);
   res->data = (char *)result;
   if(!TEST_OPT_DEGBOUND) setFlag(res,FLAG_STD);
@@ -5111,7 +5111,7 @@ static BOOLEAN jjSBA_1(leftv res, leftv v, leftv u)
       w=ivCopy(w);
     }
   }
-  result=kSba(v_id,currRing->qideal,hom,&w,(int)(long)u->Data(),0,(bigintmat*)NULL);
+  result=kSba(v_id,currRing->qideal,hom,&w,(int)(long)u->Data(),0,NULL);
   idSkipZeroes(result);
   res->data = (char *)result;
   if(!TEST_OPT_DEGBOUND) setFlag(res,FLAG_STD);
@@ -5137,7 +5137,7 @@ static BOOLEAN jjSBA_2(leftv res, leftv v, leftv u, leftv t)
       w=ivCopy(w);
     }
   }
-  result=kSba(v_id,currRing->qideal,hom,&w,(int)(long)u->Data(),(int)(long)t->Data(),(bigintmat*)NULL);
+  result=kSba(v_id,currRing->qideal,hom,&w,(int)(long)u->Data(),(int)(long)t->Data(),NULL);
   idSkipZeroes(result);
   res->data = (char *)result;
   if(!TEST_OPT_DEGBOUND) setFlag(res,FLAG_STD);
