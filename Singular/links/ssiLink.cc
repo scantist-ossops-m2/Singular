@@ -1464,8 +1464,8 @@ BOOLEAN ssiClose(si_link l)
         {
           struct timespec t;
           struct timespec rem;
-          // wait 1 sec
-          for(int i=0;i<10;i++)
+          // wait 60 sec
+          for(int i=0;i<50;i++)
           {
             // wait till signal or 100ms:
             t.tv_sec=0;
