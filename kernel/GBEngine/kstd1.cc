@@ -2636,8 +2636,7 @@ ideal kStd2(ideal F, ideal Q, tHomog h,intvec ** w, bigintmat *hilb,int syzComp,
     if ( rHasGlobalOrdering(currRing)
     && rField_is_Q(currRing)
     && (!TEST_OPT_RETURN_SB)
-    && ((currRing->order[0]==ringorder_M)
-         || currRing->LexOrder
+    && (currRing->LexOrder
          || rHasBlockOrder(currRing))
     && (!idIsMonomial(F)))
     {
