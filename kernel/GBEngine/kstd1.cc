@@ -115,7 +115,6 @@ static void kOptimizeLDeg(pLDegProc ldeg, kStrategy strat)
   }
 }
 
-
 static int doRed (LObject* h, TObject* with,BOOLEAN intoT,kStrategy strat, bool redMoraNF)
 {
   int ret;
@@ -2600,7 +2599,7 @@ ideal kStd_internal(ideal F, ideal Q, tHomog h,intvec ** w, bigintmat *hilb,
   return r;
 }
 
-ideal kStd(ideal F, ideal Q, tHomog h,intvec ** w, bigintmat *hilb,int syzComp,
+ideal kStd2(ideal F, ideal Q, tHomog h,intvec ** w, bigintmat *hilb,int syzComp,
           int newIdeal, intvec *vw, s_poly_proc_t sp)
 {
   if(idIs0(F))
@@ -2656,19 +2655,8 @@ ideal kStd(ideal F, ideal Q, tHomog h,intvec ** w, bigintmat *hilb,int syzComp,
 ideal kStd(ideal F, ideal Q, tHomog h,intvec ** w, intvec *hilb,int syzComp,
           int newIdeal, intvec *vw, s_poly_proc_t sp)
 {
-  bigintmat *hh=NULL;
-  if (hilb!=NULL)
-  {
-    int l=hilb->rows();
-    hh=new bigintmat(1,l,coeffs_BIGINT);
-    for(int i=0;i<l;i++)
-    {
-      number tp = n_Init((*hilb)[i], coeffs_BIGINT);
-      n_Delete(&BIMATELEM((*hh),1,i+1), coeffs_BIGINT);
-      BIMATELEM((*hh),1,i+1)=tp;
-    }
-  }
-  ideal res=kStd(F,Q,h,w,hh,syzComp,newIdeal,vw,sp);
+  bigintmat *hh=iv2biv(hilb,coeffs_BIGINT);
+  ideal res=kStd2(F,Q,h,w,hh,syzComp,newIdeal,vw,sp);
   if (hh!=NULL) delete hh;
   return res;
 }
@@ -2962,7 +2950,7 @@ ideal kSba(ideal F, ideal Q, tHomog h,intvec ** w, int sbaOrder, int arri, bigin
     // Go to std
     if(sigdrop || blockred > blockedreductions)
     {
-      r = kStd(r, Q, h, w, hilb, syzComp, newIdeal, vw);
+      r = kStd2(r, Q, h, w, hilb, syzComp, newIdeal, vw);
     }
     return r;
   }
@@ -3074,7 +3062,7 @@ ideal kStdShift(ideal F, ideal Q, tHomog h,intvec ** w, bigintmat *hilb,int syzC
 //##############################################################
 //##############################################################
 
-ideal kMin_std(ideal F, ideal Q, tHomog h,intvec ** w, ideal &M, bigintmat *hilb,
+ideal kMin_std2(ideal F, ideal Q, tHomog h,intvec ** w, ideal &M, bigintmat *hilb,
               int syzComp, int reduced)
 {
   if(idIs0(F))
@@ -3085,7 +3073,7 @@ ideal kMin_std(ideal F, ideal Q, tHomog h,intvec ** w, ideal &M, bigintmat *hilb
   if(rField_is_Ring(currRing))
   {
     ideal sb;
-    sb = kStd(F, Q, h, w, hilb);
+    sb = kStd2(F, Q, h, w, hilb);
     idSkipZeroes(sb);
     if(IDELEMS(sb) <= IDELEMS(F))
     {
@@ -3229,19 +3217,8 @@ ideal kMin_std(ideal F, ideal Q, tHomog h,intvec ** w, ideal &M, bigintmat *hilb
 ideal kMin_std(ideal F, ideal Q, tHomog h,intvec ** w, ideal &M, intvec *hilb,
               int syzComp, int reduced)
 {
-  bigintmat *hh=NULL;
-  if (hilb!=NULL)
-  {
-    int l=hilb->rows();
-    hh=new bigintmat(1,l,coeffs_BIGINT);
-    for(int i=0;i<l;i++)
-    {
-      number tp = n_Init((*hilb)[i], coeffs_BIGINT);
-      n_Delete(&BIMATELEM((*hh),1,i+1), coeffs_BIGINT);
-      BIMATELEM((*hh),1,i+1)=tp;
-    }
-  }
-  ideal res=kMin_std(F,Q,h,w,M,hh,syzComp,reduced);
+  bigintmat *hh=iv2biv(hilb,coeffs_BIGINT);
+  ideal res=kMin_std2(F,Q,h,w,M,hh,syzComp,reduced);
   if (hh!=NULL) delete hh;
   return res;
 }

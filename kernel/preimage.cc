@@ -135,7 +135,7 @@ ideal maGetPreimage(ring theImageRing, map theMap, ideal id, const ring dst_r)
   BITSET save;
   SI_SAVE_OPT2(save);
   si_opt_2|=Sy_bit(V_NOT_TRICKS);
-  temp2 = kStd(temp1,NULL,isNotHomog,NULL,(bigintmat*)NULL);
+  temp2 = kStd2(temp1,NULL,isNotHomog,NULL,(bigintmat*)NULL);
   SI_RESTORE_OPT2(save);
 
   id_Delete(&temp1,tmpR);

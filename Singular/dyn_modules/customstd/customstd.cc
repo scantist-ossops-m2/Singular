@@ -26,7 +26,7 @@
 //     if (args->Typ()==IDEAL_CMD)
 //     {
 //       ideal I=(ideal)args->Data();
-//       I=kStd(I,currRing->qideal,testHomog,NULL,NULL,0,0,NULL,display_sp);
+//       I=kStd2(I,currRing->qideal,testHomog,NULL,NULL,0,0,NULL,display_sp);
 //       idSkipZeroes(I);
 //       res->data=(char*)I;
 //       res->rtyp=IDEAL_CMD;
@@ -176,7 +176,7 @@ static BOOLEAN std_print_spoly(leftv res, leftv args)
     {
       si_filename=(char*)args->next->Data();
       ideal I=(ideal)args->Data();
-      I=kStd(I,currRing->qideal,testHomog,NULL,(bigintmat*)NULL,0,0,NULL,print_spoly);
+      I=kStd2(I,currRing->qideal,testHomog,NULL,(bigintmat*)NULL,0,0,NULL,print_spoly);
       idSkipZeroes(I);
       res->rtyp=IDEAL_CMD;
       res->data=(char*)I;
@@ -201,7 +201,7 @@ static ideal idGroebner_print(ideal temp,int syzComp, intvec* w=NULL, tHomog hom
     w=ivCopy(w);
     hom=isHomog;
   }
-  temp1 = kStd(temp,currRing->qideal,hom,&w,NULL,syzComp,0,NULL,print_syz);
+  temp1 = kStd2(temp,currRing->qideal,hom,&w,NULL,syzComp,0,NULL,print_syz);
   idDelete(&temp);
   if (w!=NULL) delete w;
   return temp1;
@@ -378,7 +378,7 @@ static ideal idSyzygies_print (ideal  h1, tHomog h,intvec **w)
   idTest(s_h3);
   if (currRing->qideal != NULL)
   {
-    ideal ts_h3=kStd(s_h3,currRing->qideal,h,w);
+    ideal ts_h3=kStd2(s_h3,currRing->qideal,h,w);
     idDelete(&s_h3);
     s_h3 = ts_h3;
   }
@@ -468,7 +468,7 @@ static BOOLEAN monomialabortstd(leftv res, leftv args)
     if ((args->Typ()==IDEAL_CMD) && (args->next==NULL))
     {
       ideal I=(ideal)args->Data();
-      I=kStd(I,currRing->qideal,testHomog,NULL,(bigintmat*)NULL,0,0,NULL,abort_if_monomial_sp);
+      I=kStd2(I,currRing->qideal,testHomog,NULL,(bigintmat*)NULL,0,0,NULL,abort_if_monomial_sp);
       idSkipZeroes(I);
       res->rtyp=IDEAL_CMD;
       res->data=(char*)I;
@@ -642,7 +642,7 @@ static BOOLEAN monomialabortstd(leftv res, leftv args)
 //     {
 //       ideal I=(ideal)args->Data();
 //       idealCache = NULL;
-//       I=kStd(I,currRing->qideal,testHomog,NULL,NULL,0,0,NULL,sat_sp_initial);
+//       I=kStd2(I,currRing->qideal,testHomog,NULL,NULL,0,0,NULL,sat_sp_initial);
 //       res->rtyp=IDEAL_CMD;
 //       if (idealCache)
 //         res->data=(char*)idealCache;

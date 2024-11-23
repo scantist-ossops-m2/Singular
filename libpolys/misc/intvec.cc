@@ -848,6 +848,22 @@ intvec* intvec::delete_pos(int p)
   return iv;
 }
 
+bigintmat* iv2biv(intvec* hilb, const coeffs cf)
+{
+  bigintmat *hh=NULL;
+  if (hilb!=NULL)
+  {
+    int l=hilb->rows();
+    hh=new bigintmat(1,l,cf);
+    for(int i=0;i<l;i++)
+    {
+      number tp = n_Init((*hilb)[i], cf);
+      n_Delete(&BIMATELEM((*hh),1,i+1), cf);
+      BIMATELEM((*hh),1,i+1)=tp;
+    }
+  }
+  return hh;
+}
 #pragma GCC pop_options
 
 #endif

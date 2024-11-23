@@ -370,7 +370,7 @@ static ideal idMake(std::vector<std::vector<int> > vecs)
 //the quotient ring of h1 respect to h2
 static ideal idmodulo(ideal h1,ideal h2)
 {
-  ideal gb=kStd(h2,NULL,testHomog,NULL,(bigintmat*)NULL,0,0,NULL);
+  ideal gb=kStd2(h2,NULL,testHomog,NULL,(bigintmat*)NULL,0,0,NULL);
   idSkipZeroes(gb);
   ideal idq=kNF(gb,NULL,h1);
   idSkipZeroes(idq);
@@ -3626,7 +3626,7 @@ static BOOLEAN makeqring(leftv res, leftv args)
        ideal h2=id_complement(hh);
        ideal h1=id_Init(1,1);
        idInsertPoly(h1,p);
-       ideal gb=kStd(h2,NULL,testHomog,NULL,NULL,0,0,NULL);
+       ideal gb=kStd2(h2,NULL,testHomog,NULL,NULL,0,0,NULL);
        ideal idq=kNF(gb,NULL,h1);
        idSkipZeroes(h1);
          res->rtyp =POLY_CMD;

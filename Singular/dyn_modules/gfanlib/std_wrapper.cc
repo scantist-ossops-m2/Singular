@@ -10,7 +10,7 @@ ideal gfanlib_kStd_wrapper(ideal I, ring r, tHomog h=testHomog)
     rChangeCurrRing(r);
 
   intvec* nullVector = NULL;
-  ideal stdI = kStd(I,currRing->qideal,h,&nullVector,(bigintmat*)NULL); // there is still a memory leak here!!!
+  ideal stdI = kStd2(I,currRing->qideal,h,&nullVector,(bigintmat*)NULL); // there is still a memory leak here!!!
   id_DelDiv(stdI,currRing);
   idSkipZeroes(stdI);
   if (nullVector!=NULL) delete nullVector;
@@ -132,7 +132,7 @@ ideal gfanlib_satStd_wrapper(ideal I, ring r, tHomog h=testHomog)
   for (int i=n-1; i>=0; i--)
     gitfan_satstdSaturatingVariables[i] = i+1;
 
-  ideal stdI = kStd(I,currRing->qideal,h,NULL,(bigintmat*)NULL,0,0,NULL,sat_vars_sp);
+  ideal stdI = kStd2(I,currRing->qideal,h,NULL,(bigintmat*)NULL,0,0,NULL,sat_vars_sp);
   id_DelDiv(stdI,currRing);
   idSkipZeroes(stdI);
 
@@ -175,7 +175,7 @@ ideal gfanlib_monomialabortStd_wrapper(ideal I, ring r, tHomog h=testHomog)
   if (origin != r)
     rChangeCurrRing(r);
 
-  ideal stdI = kStd(I,currRing->qideal,h,NULL,(bigintmat*)NULL,0,0,NULL,abort_if_monomial_sp);
+  ideal stdI = kStd2(I,currRing->qideal,h,NULL,(bigintmat*)NULL,0,0,NULL,abort_if_monomial_sp);
   id_DelDiv(stdI,currRing);
   idSkipZeroes(stdI);
 

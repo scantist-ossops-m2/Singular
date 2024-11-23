@@ -423,7 +423,7 @@ static BOOLEAN idPrepare(leftv res, leftv h)
   //        ideal idPrepare (ideal  h1, tHomog hom, int syzcomp, intvec **w);
 
   ideal J = // idPrepare( I, hom, iComp, &w);
-           kStd(I, currRing->qideal, hom, &w, (bigintmat*)NULL, iComp);
+           kStd2(I, currRing->qideal, hom, &w, (bigintmat*)NULL, iComp);
 
   idTest(J);
 

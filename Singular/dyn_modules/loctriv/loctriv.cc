@@ -42,7 +42,7 @@ static BOOLEAN kstd(leftv res, leftv args)
       s_h1 = h1;
     }
 
-    s_h3=kStd(s_h1,NULL,testHomog,&w,(bigintmat*)NULL,k);
+    s_h3=kStd2(s_h1,NULL,testHomog,&w,(bigintmat*)NULL,k);
 
     if (orig_ring != syz_ring)
     {

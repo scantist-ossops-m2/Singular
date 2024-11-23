@@ -937,7 +937,7 @@ lists makeTaunList64(int64vec *iv64,int64 i64)
 
 ideal idStd(ideal G)
 {
-  ideal GG = kStd(G, NULL, testHomog, NULL,(bigintmat*)NULL);
+  ideal GG = kStd2(G, NULL, testHomog, NULL,(bigintmat*)NULL);
   idSkipZeroes(GG);
   return GG;
 }

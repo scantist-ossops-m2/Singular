@@ -72,7 +72,7 @@ ideal idMinBase (ideal h1, ideal *SB)
     }
     else
     {
-      ideal re=kMin_std(h1,currRing->qideal,(tHomog)homog,&wth,h2,(bigintmat*)NULL,0,3);
+      ideal re=kMin_std2(h1,currRing->qideal,(tHomog)homog,&wth,h2,(bigintmat*)NULL,0,3);
       idDelete(&re);
       return h2;
     }
@@ -82,12 +82,12 @@ ideal idMinBase (ideal h1, ideal *SB)
   {
     return e;
   }
-  h2 = kStd(h1,currRing->qideal,isNotHomog,NULL,(bigintmat*)NULL);
+  h2 = kStd2(h1,currRing->qideal,isNotHomog,NULL,(bigintmat*)NULL);
   if (SB!=NULL) *SB=h2;
   h3 = idMaxIdeal(1);
   h4=idMult(h2,h3);
   idDelete(&h3);
-  h3=kStd(h4,currRing->qideal,isNotHomog,NULL,(bigintmat*)NULL);
+  h3=kStd2(h4,currRing->qideal,isNotHomog,NULL,(bigintmat*)NULL);
   k = IDELEMS(h3);
   while ((k > 0) && (h3->m[k-1] == NULL)) k--;
   j = -1;
@@ -187,7 +187,7 @@ static ideal idSectWithElim (ideal h1,ideal h2, GbVariant alg)
   idDelete(&h1);
   idDelete(&h2);
   // eliminate t:
-  ideal res=idElimination(h,t,NULL,alg);
+  ideal res=idElimination2(h,t,NULL,alg);
   // cleanup
   idDelete(&h);
   pDelete(&t);
@@ -219,7 +219,7 @@ static ideal idGroebner(ideal temp,int syzComp,GbVariant alg, bigintmat* hilb=NU
   if ((alg==GbStd)||(alg==GbDefault))
   {
     if (TEST_OPT_PROT &&(alg==GbStd)) { PrintS("std:"); mflush(); }
-    res = kStd(temp,currRing->qideal,hom,&w,hilb,syzComp);
+    res = kStd2(temp,currRing->qideal,hom,&w,hilb,syzComp);
     idDelete(&temp);
   }
   else if (alg==GbSlimgb)
@@ -454,7 +454,7 @@ ideal idSect (ideal h1,ideal h2, GbVariant alg)
   if (TEST_OPT_RETURN_SB)
   {
      w=NULL;
-     temp1=kStd(result,currRing->qideal,testHomog,&w,(bigintmat*)NULL);
+     temp1=kStd2(result,currRing->qideal,testHomog,&w,(bigintmat*)NULL);
      if (w!=NULL) delete w;
      idDelete(&result);
      idSkipZeroes(temp1);
@@ -968,7 +968,7 @@ ideal idSyzygies (ideal  h1, tHomog h,intvec **w, BOOLEAN setSyzComp,
   idTest(s_h3);
   if (currRing->qideal != NULL)
   {
-    ideal ts_h3=kStd(s_h3,currRing->qideal,h,w,(bigintmat*)NULL);
+    ideal ts_h3=kStd2(s_h3,currRing->qideal,h,w,(bigintmat*)NULL);
     idDelete(&s_h3);
     s_h3 = ts_h3;
   }
@@ -1423,7 +1423,7 @@ static ideal idInitializeQuot (ideal  h1, ideal h2, BOOLEAN h1IsStb, BOOLEAN *ad
   intvec * weights;
   hom = (tHomog)idHomModule(h1,currRing->qideal,&weights);
   if /**addOnlyOne &&*/ (/*(*/ !h1IsStb /*)*/)
-    temph1 = kStd(h1,currRing->qideal,hom,&weights,(bigintmat*)NULL);
+    temph1 = kStd2(h1,currRing->qideal,hom,&weights,(bigintmat*)NULL);
   else
     temph1 = idCopy(h1);
   if (weights!=NULL) delete weights;
@@ -1557,11 +1557,11 @@ ideal idQuot (ideal  h1, ideal h2, BOOLEAN h1IsStb, BOOLEAN resultIsIdeal)
   if (addOnlyOne)
   {
     if(!rField_is_Ring(currRing)) si_opt_1 |= Sy_bit(OPT_SB_1);
-    s_h3 = kStd(s_h4,currRing->qideal,hom,&weights1,(bigintmat*)NULL,0/*kmax-1*/,IDELEMS(s_h4)-1);
+    s_h3 = kStd2(s_h4,currRing->qideal,hom,&weights1,(bigintmat*)NULL,0/*kmax-1*/,IDELEMS(s_h4)-1);
   }
   else
   {
-    s_h3 = kStd(s_h4,currRing->qideal,hom,&weights1,(bigintmat*)NULL,kmax-1);
+    s_h3 = kStd2(s_h4,currRing->qideal,hom,&weights1,(bigintmat*)NULL,kmax-1);
   }
   SI_RESTORE_OPT1(old_test1);
 
@@ -1608,7 +1608,7 @@ ideal idQuot (ideal  h1, ideal h2, BOOLEAN h1IsStb, BOOLEAN resultIsIdeal)
 /*2
 * eliminate delVar (product of vars) in h1
 */
-ideal idElimination (ideal h1,poly delVar,bigintmat *hilb, GbVariant alg)
+ideal idElimination2 (ideal h1,poly delVar,bigintmat *hilb, GbVariant alg)
 {
   int    i,j=0,k,l;
   ideal  h,hh, h3;
@@ -1850,6 +1850,14 @@ ideal idElimination (ideal h1,poly delVar,bigintmat *hilb, GbVariant alg)
   if (w!=NULL)
     delete w;
   return h3;
+}
+
+ideal idElimination(ideal h1,poly delVar,intvec *hilb, GbVariant alg)
+{
+  bigintmat *hh=iv2biv(hilb,coeffs_BIGINT);
+  ideal res=idElimination2(h1,delVar,hh,alg);
+  if (hh!=NULL) delete hh;
+  return res;
 }
 
 #ifdef WITH_OLD_MINOR
@@ -2192,7 +2200,7 @@ static ideal idHandleIdealOp(ideal arg,int syzcomp,int isIdeal=FALSE)
   else
     s_temp=arg;
 
-  ideal s_temp1 = kStd(s_temp,currRing->qideal,testHomog,&w,NULL,length);
+  ideal s_temp1 = kStd2(s_temp,currRing->qideal,testHomog,&w,NULL,length);
   if (w!=NULL) delete w;
 
   if (syz_ring!=orig_ring)
@@ -3368,7 +3376,7 @@ ideal id_Satstd(const ideal I, ideal J, const ring r)
       }
     }
   }
-  ideal res=kStd(I,r->qideal,testHomog,NULL,(bigintmat*)NULL,0,0,NULL,id_sat_vars_sp);
+  ideal res=kStd2(I,r->qideal,testHomog,NULL,(bigintmat*)NULL,0,0,NULL,id_sat_vars_sp);
   omFreeSize(id_satstdSaturatingVariables,(1+rVar(currRing))*sizeof(int));
   id_satstdSaturatingVariables=NULL;
   if (currRing!=save) rChangeCurrRing(save);
@@ -3513,7 +3521,7 @@ ideal idSaturate_intern(ideal I, ideal J, int &k, BOOLEAN isIdeal, BOOLEAN isSB)
       id_Delete(&Istd,currRing);
       Istd=Iquot;
       w=NULL;
-      Istd=kStd(Iquot,currRing->qideal,testHomog,&w,(bigintmat*)NULL);
+      Istd=kStd2(Iquot,currRing->qideal,testHomog,&w,(bigintmat*)NULL);
       if (w!=NULL) delete w;
       id_Delete(&Iquot,currRing);
       if (elem==0) break;
@@ -3547,7 +3555,7 @@ ideal idSaturate_intern(ideal I, ideal J, int &k, BOOLEAN isIdeal, BOOLEAN isSB)
     if (elem==0) break;
   }
   k--;
-  Istd=kStd(Iquot,currRing->qideal,testHomog,&w,(bigintmat*)NULL);
+  Istd=kStd2(Iquot,currRing->qideal,testHomog,&w,(bigintmat*)NULL);
   idSkipZeroes(Istd);
   SI_RESTORE_OPT2(save_opt);
   //if (only_vars)
@@ -3579,7 +3587,7 @@ ideal id_Homogenize(ideal I, int var_num, const ring r)
     ideal III=id_Homogen(II,1,tmpR);
     id_Delete(&II,tmpR);
     intvec *ww=NULL;
-    II=kStd(III,currRing->qideal,(tHomog)TRUE,&ww,(bigintmat*)NULL);
+    II=kStd2(III,currRing->qideal,(tHomog)TRUE,&ww,(bigintmat*)NULL);
     if (ww!=NULL) delete ww;
     id_Delete(&III,tmpR);
     if (tmpR!=r)
@@ -3624,7 +3632,7 @@ ideal id_HomogenizeW(ideal I, int var_num, intvec *w,const ring r)
     ideal III=id_Homogen(II,1,tmpR);
     id_Delete(&II,tmpR);
     intvec *ww=NULL;
-    II=kStd(III,currRing->qideal,(tHomog)TRUE,&ww,(bigintmat*)NULL);
+    II=kStd2(III,currRing->qideal,(tHomog)TRUE,&ww,(bigintmat*)NULL);
     if (ww!=NULL) delete ww;
     id_Delete(&III,tmpR);
     if (tmpR!=r)

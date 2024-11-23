@@ -24,7 +24,7 @@ poly checkForMonomialViaSuddenSaturation(const ideal I, const ring r)
   intvec* nullVector = NULL;
   do
   {
-    ideal Jstd = kStd(J,currRing->qideal,testHomog,&nullVector,(bigintmat*)NULL);
+    ideal Jstd = kStd2(J,currRing->qideal,testHomog,&nullVector,(bigintmat*)NULL);
     ideal JquotM = idQuot(Jstd,M,true,true);
     ideal JquotMredJ = kNF(Jstd,currRing->qideal,JquotM);
     b = idIs0(JquotMredJ);

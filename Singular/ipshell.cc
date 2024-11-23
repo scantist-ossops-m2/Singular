@@ -3900,7 +3900,7 @@ spectrumState   spectrumCompute( poly h,lists *L,int fast )
   #endif
   #endif
 
-  ideal stdJ = kStd(J,currRing->qideal,isNotHomog,NULL,(bigintmat*)NULL);
+  ideal stdJ = kStd2(J,currRing->qideal,isNotHomog,NULL,NULL);
   idSkipZeroes( stdJ );
 
   #ifdef SPECTRUM_DEBUG

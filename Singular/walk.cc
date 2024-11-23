@@ -935,7 +935,7 @@ static ideal MstdCC(ideal G)
   BITSET save1,save2;
   SI_SAVE_OPT(save1,save2);
   si_opt_1|=(Sy_bit(OPT_REDTAIL)|Sy_bit(OPT_REDSB));
-  ideal G1 = kStd(G, NULL, testHomog, NULL,(bigintmat*)NULL);
+  ideal G1 = kStd2(G, NULL, testHomog, NULL,(bigintmat*)NULL);
   SI_RESTORE_OPT(save1,save2);
 
   idSkipZeroes(G1);
@@ -950,7 +950,7 @@ static ideal MstdhomCC(ideal G)
   BITSET save1,save2;
   SI_SAVE_OPT(save1,save2);
   si_opt_1|=(Sy_bit(OPT_REDTAIL)|Sy_bit(OPT_REDSB));
-  ideal G1 = kStd(G, NULL, isHomog, NULL,(bigintmat*)NULL);
+  ideal G1 = kStd2(G, NULL, isHomog, NULL,(bigintmat*)NULL);
   SI_RESTORE_OPT(save1,save2);
 
   idSkipZeroes(G1);
@@ -3309,7 +3309,7 @@ static ideal LastGB(ideal G, intvec* curr_weight,int tp_deg)
 #ifdef  BUCHBERGER_ALG
     M = MstdhomCC(Gomega1);
 #else
-    M=kStd(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
+    M=kStd2(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
     delete hilb_func;
 #endif // BUCHBERGER_ALG
 #ifdef TIME_TEST
@@ -4073,7 +4073,7 @@ static ideal Rec_LastGB(ideal G, intvec* curr_weight,
 #ifdef  BUCHBERGER_ALG
     M = MstdhomCC(Gomega1);
 #else
-    M=kStd(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
+    M=kStd2(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
     delete hilb_func;
 #endif // BUCHBERGER_ALG
 #ifdef TIME_TEST
@@ -4840,7 +4840,7 @@ static ideal REC_GB_Mwalk(ideal G, intvec* curr_weight, intvec* orig_target_weig
 #ifdef  BUCHBERGER_ALG
     M = MstdhomCC(Gomega1);
 #else
-    M=kStd(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
+    M=kStd2(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
     delete hilb_func;
 #endif
 #ifdef TIME_TEST
@@ -5177,7 +5177,7 @@ ideal MwalkAlt(ideal Go, intvec* curr_weight, intvec* target_weight)
 #ifdef  BUCHBERGER_ALG
       M = MstdhomCC(Gomega1);
 #else
-      M=kStd(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
+      M=kStd2(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
       delete hilb_func;
 #endif
 #ifdef TIME_TEST
@@ -5479,10 +5479,10 @@ ideal Mwalk(ideal Go, intvec* orig_M, intvec* target_M,
     to = clock();
 #endif
 #ifndef  BUCHBERGER_ALG
-    M=kStd(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
+    M=kStd2(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
     delete hilb_func;
 #else
-    M = kStd(Gomega1,NULL,testHomog,NULL,(bigintmat*)NULL,0,0,NULL);
+    M = kStd2(Gomega1,NULL,testHomog,NULL,(bigintmat*)NULL,0,0,NULL);
 #endif
 #ifdef TIME_TEST
     tstd = tstd + clock() - to;
@@ -5765,10 +5765,10 @@ ideal Mrwalk(ideal Go, intvec* orig_M, intvec* target_M, int weight_rad, int per
     to = clock();
 #endif
 #ifndef BUCHBERGER_ALG
-    M=kStd(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
+    M=kStd2(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
     delete hilb_func;
 #else
-    M = kStd(Gomega1,NULL,testHomog,NULL,(bigintmat*)NULL,0,0,NULL);
+    M = kStd2(Gomega1,NULL,testHomog,NULL,(bigintmat*)NULL,0,0,NULL);
 #endif
 #ifdef TIME_TEST
     tstd = tstd + clock() - to;
@@ -5944,7 +5944,7 @@ ideal Mrwalk(ideal Go, intvec* orig_M, intvec* target_M, int weight_rad, int per
    1) the improved Buchberger algorithm or
    2) the changed perturbation walk algorithm with a decreased degree.
 */
-// if nP = 0 use kStd, else call LastGB
+// if nP = 0 use kStd2, else call LastGB
 ideal Mpwalk(ideal Go, int op_deg, int tp_deg,intvec* curr_weight,
              intvec* target_weight, int nP, int reduction, int printout)
 {
@@ -6161,7 +6161,7 @@ ideal Mpwalk(ideal Go, int op_deg, int tp_deg,intvec* curr_weight,
 #ifdef  BUCHBERGER_ALG
     M = MstdhomCC(Gomega1);
 #else
-    M=kStd(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
+    M=kStd2(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
     delete hilb_func;
 #endif
 
@@ -6324,7 +6324,7 @@ ideal Mpwalk(ideal Go, int op_deg, int tp_deg,intvec* curr_weight,
         Print("\n// ring r%d = %s;\n", nstep, rString(currRing));
         //idElements(F1, "G");
       }
-      // LastGB is "better" than the kStd subroutine
+      // LastGB is "better" than the kStd2 subroutine
 #ifdef TIME_TEST
       to=clock();
 #endif
@@ -6655,7 +6655,7 @@ ideal Mprwalk(ideal Go, intvec* orig_M, intvec* target_M, int weight_rad,
 #ifdef  BUCHBERGER_ALG
     M = MstdhomCC(Gomega1);
 #else
-    M=kStd(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
+    M=kStd2(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
     delete hilb_func;
 #endif
 #ifdef CHECK_IDEAL_MWALK
@@ -6855,7 +6855,7 @@ ideal Mprwalk(ideal Go, intvec* orig_M, intvec* target_M, int weight_rad,
         Print("\n// ring r%d = %s;\n", nstep, rString(currRing));
         //idElements(F1, "G");
       }
-      // LastGB is "better" than the kStd subroutine
+      // LastGB is "better" than the kStd2 subroutine
 #ifdef TIME_TEST
       to=clock();
 #endif
@@ -7387,7 +7387,7 @@ static ideal rec_fractal_call(ideal G, int nlev, intvec* ivtarget,
 #ifdef  BUCHBERGER_ALG
       Gresult = MstdhomCC(Gomega1);
 #else
-      Gresult =kStd(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,omega);
+      Gresult =kStd2(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,omega);
       delete hilb_func;
 #endif
 #ifdef TIME_TEST
@@ -7958,7 +7958,7 @@ static ideal rec_r_fractal_call(ideal G, int nlev, intvec* ivtarget,
 #ifdef  BUCHBERGER_ALG
       Gresult = MstdhomCC(Gomega1);
 #else
-      Gresult =kStd(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,omega);
+      Gresult =kStd2(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,omega);
       delete hilb_func;
 #endif
 #ifdef TIME_TEST
@@ -8392,7 +8392,7 @@ ideal Mfrwalk(ideal G, intvec* ivstart, intvec* ivtarget,
 /*******************************************************
  * Tran's algorithm                                    *
  *                                                     *
- * use kStd, if nP = 0, else call Ab_Rec_Pert (LastGB) *
+ * use kStd2, if nP = 0, else call Ab_Rec_Pert (LastGB) *
  *******************************************************/
 ideal TranMImprovwalk(ideal G,intvec* curr_weight,intvec* target_tmp, int nP)
 {
@@ -8535,7 +8535,7 @@ ideal TranMImprovwalk(ideal G,intvec* curr_weight,intvec* target_tmp, int nP)
 #ifdef  BUCHBERGER_ALG
     M = MstdhomCC(Gomega1);
 #else
-    M=kStd(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
+    M=kStd2(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
     delete hilb_func;
 #endif // BUCHBERGER_ALG
 #ifdef TIME_TEST
@@ -8631,7 +8631,7 @@ ideal TranMImprovwalk(ideal G,intvec* curr_weight,intvec* target_tmp, int nP)
 #ifdef TIME_TEST
       to=clock();
 #endif
-      /*apply kStd or LastGB to compute  a lex. red. Groebner basis of <G>*/
+      /*apply kStd2 or LastGB to compute  a lex. red. Groebner basis of <G>*/
       if(nP == 0 || MivSame(target_tmp, iv_lp) == 0){
         //Print("\n\n// calls \"std in ring r_%d = %s;", nwalk, rString(currRing));
         G = MstdCC(G1);//no result for qnt1
@@ -8822,7 +8822,7 @@ ideal TranMImprovwalk(ideal G,intvec* curr_weight,intvec* target_tmp, int nP)
 /*******************************************************
  * Tran's algorithm with random element                *
  *                                                     *
- * use kStd, if nP = 0, else call Ab_Rec_Pert (LastGB) *
+ * use kStd2, if nP = 0, else call Ab_Rec_Pert (LastGB) *
  *******************************************************/
 ideal TranMrImprovwalk(ideal G,intvec* curr_weight,intvec* target_tmp, int nP, int weight_rad, int pert_deg)
 {
@@ -8989,7 +8989,7 @@ ideal TranMrImprovwalk(ideal G,intvec* curr_weight,intvec* target_tmp, int nP, i
 #ifdef  BUCHBERGER_ALG
     M = MstdhomCC(Gomega1);
 #else
-    M=kStd(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
+    M=kStd2(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
     delete hilb_func;
 #endif
 #ifdef TIME_TEST
@@ -9171,7 +9171,7 @@ ideal TranMrImprovwalk(ideal G,intvec* curr_weight,intvec* target_tmp, int nP, i
 #ifdef TIME_TEST
       to=clock();
 #endif
-      // apply kStd or LastGB to compute  a lex. red. Groebner basis of <G>
+      // apply kStd2 or LastGB to compute  a lex. red. Groebner basis of <G>
       if(nP == 0 || MivSame(target_tmp, iv_lp) == 0)
       {
         //Print("\n\n// calls \"std in ring r_%d = %s;", nwalk, rString(currRing));
@@ -9517,7 +9517,7 @@ static ideal Mpwalk_MAltwalk1(ideal Go, intvec* curr_weight, int tp_deg)
 #ifdef  BUCHBERGER_ALG
     M = MstdhomCC(Gomega1);
 #else
-    M=kStd(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
+    M=kStd2(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
     delete hilb_func;
 #endif // BUCHBERGER_ALG
 #ifdef TIME_TEST
@@ -9838,7 +9838,7 @@ ideal MAltwalk1(ideal Go, int op_deg, int tp_deg, intvec* curr_weight,
 #ifdef  BUCHBERGER_ALG
     M = MstdhomCC(Gomega1);
 #else
-    M=kStd(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
+    M=kStd2(Gomega1,NULL,isHomog,NULL,hilb_func,0,NULL,curr_weight);
     delete hilb_func;
 #endif // BUCHBERGER_ALG
 #ifdef TIME_TEST

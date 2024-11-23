@@ -45,7 +45,7 @@ ideal kSba(ideal F,ideal Q, tHomog h, intvec ** mw, int incremental=0, int arri=
 ideal kStd(ideal F, ideal Q, tHomog h, intvec ** mw,intvec *hilb=NULL,
           int syzComp=0,int newIdeal=0, intvec *vw=NULL, s_poly_proc_t sp=NULL);
 
-ideal kStd(ideal F, ideal Q, tHomog h, intvec ** mw,bigintmat *hilb=NULL,
+ideal kStd2(ideal F, ideal Q, tHomog h, intvec ** mw,bigintmat *hilb=NULL,
           int syzComp=0,int newIdeal=0, intvec *vw=NULL, s_poly_proc_t sp=NULL);
 
 ideal kStd_internal(ideal F, ideal Q, tHomog h,intvec ** w, bigintmat *hilb=NULL,
@@ -80,7 +80,7 @@ long  kHomModDeg(poly p, const ring r = currRing);
 
 ideal stdred(ideal F, ideal Q, tHomog h,intvec ** w);
 
-ideal kMin_std(ideal F, ideal Q, tHomog h,intvec ** w, ideal &M,
+ideal kMin_std2(ideal F, ideal Q, tHomog h,intvec ** w, ideal &M,
               bigintmat *hilb, int syzComp=0,int reduced=0);
 
 ideal kMin_std(ideal F, ideal Q, tHomog h,intvec ** w, ideal &M,

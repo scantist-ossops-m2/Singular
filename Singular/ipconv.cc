@@ -94,14 +94,7 @@ static void * iiBI2V(void *data)
 static void * iiIV2BIV(void *data)
 {
   intvec *aa=(intvec*)data;
-  int l=aa->rows();
-  bigintmat* bim=new bigintmat(1,l,coeffs_BIGINT);
-  for(int i=0;i<l;i++)
-  {
-    number tp = n_Init((*aa)[i], coeffs_BIGINT);
-    n_Delete(&BIMATELEM((*bim),1,i+1), coeffs_BIGINT);
-    BIMATELEM((*bim),1,i+1)=tp;
-  }
+  bigintmat* bim=iv2biv(aa,coeffs_BIGINT);
   return (void *)bim;
 }
 

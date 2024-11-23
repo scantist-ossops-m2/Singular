@@ -12,6 +12,7 @@
 #ifdef HAVE_OMALLOC
 #include "omalloc/omallocClass.h"
 #endif
+#include "coeffs/bigintmat.h"
 
 #include "reporter/reporter.h"
 
@@ -159,6 +160,8 @@ intvec * ivMult(intvec * a, intvec * b);
 void     ivTriangIntern(intvec * imat, int &ready, int &all);
 intvec * ivSolveKern(intvec * imat, int ready);
 intvec * ivConcat(intvec * a, intvec * b);
+
+bigintmat* iv2biv(intvec* hilb, const coeffs cf);
 
 #ifdef MDEBUG
 inline void ivTest(intvec * v)
