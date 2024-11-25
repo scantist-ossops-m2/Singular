@@ -77,7 +77,7 @@ EXAMPLE: example RiemannRochBN; shows an example
 
   divisor D =  makeDivisor(I,J);
   // kill common places of the positive and negative divisor
-  D = normalForm(D);
+  D = normalFormDivisor(D);
   I = D.num;
   J = D.den;
   // compute a set of minimal generators
