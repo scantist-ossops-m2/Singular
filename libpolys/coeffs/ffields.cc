@@ -381,7 +381,7 @@ static BOOLEAN nfGreater (number a,number b, const coeffs r)
   nfTest(a, r);
   nfTest(b, r);
 #endif
-  return (long)a != (long)b;
+  return (long)a > (long)b;
 }
 
 /*2

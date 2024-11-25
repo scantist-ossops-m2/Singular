@@ -485,9 +485,11 @@ static BOOLEAN nr2mDivBy (number a, number b, const coeffs r)
   }
 }
 
-static BOOLEAN nr2mGreater(number a, number b, const coeffs r)
+static BOOLEAN nr2mGreater(number as, number bs, const coeffs r)
 {
-  return nr2mDivBy(a, b,r);
+  unsigned long a = (unsigned long)as;
+  unsigned long b = (unsigned long)bs;
+  return (a > b);
 }
 
 static int nr2mDivComp(number as, number bs, const coeffs)
