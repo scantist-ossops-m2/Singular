@@ -97,7 +97,6 @@ example
   ring R = 0, (x,y,z), dp;
   ideal I = x2+xyz, y2-z3y, z3+y5xz;
   ideal J = maxideal(3);
-  ideal Q = quotient(I, J);  
   ideal K = modQuotient(I, J);
   K;
 }
@@ -243,9 +242,9 @@ EXAMPLE: example modSat; shows an example
    int ii, kk;
    ideal i = I;
    I = modStd(I, exactness);
-   while (ii <= size(i)) {
+   while (ii <= ncols(i)) {
        i = modQuotient(I, J, exactness);
-       for (ii = 1; ii <= size(i); ii++) {
+       for (ii = 1; ii <= ncols(i); ii++) {
            if (reduce(i[ii], I, 1) != 0) break;
        }
        I = modStd(i, exactness);
@@ -259,7 +258,6 @@ example
   ring R = 0, (x,y,z), dp;
   ideal I = x2+xyz, y2-z3y, z3+y5xz;
   ideal J = maxideal(3);
-  ideal Q=quotient(I, J);  
   list L = modSat(I, J);
   L;
 }
