@@ -395,7 +395,7 @@ LIB "all.lib";
 * homolog_lib:: procedures for homological algebra
 * integralbasis_lib:: Integral basis in algebraic function fields
 * intprog_lib:: Integer Programming
-* moddiq_lib:: ideal quotient and saturation using modular methods
+* modquotient_lib:: ideal quotient and saturation using modular methods
 * modstd_lib:: Groebner basis of ideals via modular computations
 * modules_lib:: Representations of Modules
 * monomialideal_lib:: Primary and irreducible decompositions of monomial ideals
@@ -472,9 +472,9 @@ LIB "all.lib";
 @subsection intprog_lib
 @c lib intprog.lib
 @c ----------------------------------------------------------
-@node moddiq_lib
-@subsection moddiq_lib
-@c lib moddiq.lib
+@node modquotient_lib
+@subsection modquotient_lib
+@c lib modquotient.lib
 @c ---------------------------------------------------------
 @node modules_lib
 @subsection modules_lib
