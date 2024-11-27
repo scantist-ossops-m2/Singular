@@ -142,6 +142,7 @@ static proc pTest_quotient(string command, list args, ideal result, int p)
            return(0);
        }
    }
+   attrib(Qp, "isSB", 1);
    for (i = ncols(result); i > 0; i--) {
        if (reduce(result[i], Qp, 1) != 0) {
            setring(br);
