@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////
-version="version primdec.lib 4.4.0.6 Sep_2024 "; // $Id$
+version="version primdec.lib 4.4.0.7 Nov_2024 "; // $Id$
 category="Commutative Algebra";
 info="
 LIBRARY: primdec.lib   Primary Decomposition and Radical of Ideals
@@ -5600,9 +5600,6 @@ NOTE:    - Algorithm of Gianni/Trager/Zacharias.
            terminates (may result in an infinite loop in small characteristic!)
          - For local orderings, the result is considered in the localization
            of the polynomial ring, not in the power series ring
-         - For local and mixed orderings, the decomposition in the
-           corresponding global ring is returned if the string 'global'
-           is specified as second argument
 EXAMPLE: example primdecGTZE; shows an example
 "
 {
@@ -5633,9 +5630,6 @@ NOTE:    - Algorithm of Gianni/Trager/Zacharias.
            terminates (may result in an infinite loop in small characteristic!)
          - For local orderings, the result is considered in the localization
            of the polynomial ring, not in the power series ring
-         - For local and mixed orderings, the decomposition in the
-           corresponding global ring is returned if the string 'global'
-           is specified as second argument
 EXAMPLE: example primdecGTZ; shows an example
 "
 {
@@ -5720,9 +5714,6 @@ RETURN:  a ring containing two lists: @code{absolute_primes}, the absolute
          absolute prime component is defined.
          For local orderings, the result is considered in the localization
          of the polynomial ring, not in the power series ring.
-         For local and mixed orderings, the decomposition in the
-         corresponding global ring is returned if the string 'global'
-         is specified as second argument
 NOTE:    Algorithm of Gianni/Trager/Zacharias combined with the
          @code{absFactorize} command.
 SEE ALSO: primdecGTZ; absFactorize
@@ -5759,9 +5750,6 @@ RETURN:  a ring containing two lists: @code{absolute_primes}, the absolute
          absolute prime component is defined.
          For local orderings, the result is considered in the localization
          of the polynomial ring, not in the power series ring.
-         For local and mixed orderings, the decomposition in the
-         corresponding global ring is returned if the string 'global'
-         is specified as second argument
 NOTE:    Algorithm of Gianni/Trager/Zacharias combined with the
          @code{absFactorize} command.
 SEE ALSO: primdecGTZ; absFactorize
@@ -5973,9 +5961,6 @@ NOTE:    Algorithm of Shimoyama/Yokoyama.
 @end format
          For local orderings, the result is considered in the localization
          of the polynomial ring, not in the power series ring.
-         For local and mixed orderings, the decomposition in the
-         corresponding global ring is returned if the string 'global'
-         is specified as third argument
 EXAMPLE: example primdecSY; shows an example
 "
 {
@@ -6010,9 +5995,6 @@ NOTE:    Algorithm of Shimoyama/Yokoyama.
 @end format
          For local orderings, the result is considered in the localization
          of the polynomial ring, not in the power series ring.
-         For local and mixed orderings, the decomposition in the
-         corresponding global ring is returned if the string 'global'
-         is specified as third argument
 EXAMPLE: example primdecSY; shows an example
 "
 {
@@ -6102,9 +6084,6 @@ NOTE:    - Designed for characteristic 0, works also in char k > 0 based
            on an algorithm of Yokoyama
          - For local orderings, the result is considered in the localization
            of the polynomial ring, not in the power series ring
-         - For local and mixed orderings, the decomposition in the
-           corresponding global ring is returned if the string 'global'
-           is specified as second argument
 EXAMPLE: example minAssGTZE; shows an example
 "
 {
@@ -6139,9 +6118,6 @@ NOTE:    - Designed for characteristic 0, works also in char k > 0 based
            on an algorithm of Yokoyama
          - For local orderings, the result is considered in the localization
            of the polynomial ring, not in the power series ring
-         - For local and mixed orderings, the decomposition in the
-           corresponding global ring is returned if the string 'global'
-           is specified as second argument
 EXAMPLE: example minAssGTZ; shows an example
 "
 {
@@ -6266,9 +6242,6 @@ NOTE:    If c=0, the given ordering of the variables is used. @*
          which in some cases may considerably speed up the algorithm. @*
          For local orderings, the result is considered in the localization
          of the polynomial ring, not in the power series ring
-         For local and mixed orderings, the decomposition in the
-         corresponding global ring is returned if the string 'global'
-         is specified as third argument
 EXAMPLE: example minAssCharE; shows an example
 "
 {
@@ -6295,9 +6268,6 @@ NOTE:    If c=0, the given ordering of the variables is used. @*
          which in some cases may considerably speed up the algorithm. @*
          For local orderings, the result is considered in the localization
          of the polynomial ring, not in the power series ring
-         For local and mixed orderings, the decomposition in the
-         corresponding global ring is returned if the string 'global'
-         is specified as third argument
 EXAMPLE: example minAssChar; shows an example
 "
 {
