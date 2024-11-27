@@ -40,7 +40,8 @@ proc modQuotient(ideal I, ideal J, list #)
 ASSUME: The common basering of I and J is defined over the rationals.
 RETURN: The ideal quotient I:J.
 NOTE: - The resulting ideal is given by a standard basis in the basering.@*
-      - The final result will be checked for correctness if # is either empty (not entered) or if #[1] = 1. Without the check, the functions returns a result which is correct with high probability.
+      - The final result will be checked for correctness if # is either empty (not entered) or if #[1] = 1.
+      Without the check, the functions returns a result which is correct with high probability.
 
 EXAMPLE: example modQuotient; shows an example
 "
@@ -223,13 +224,14 @@ static proc quotient_test(ideal I, ideal J, ideal Q)
 proc modSat(ideal I, ideal J, list #)
 "USAGE:   modSat(I, J, #); I, J ideals, # an optional list which is either empty (not entered) or consists of precisely one integer which is 0 or 1.
 ASSUME: The common basering of I and J is defined over the rationals.
-RETURN: A list consisting of an ideal [1] and an integer [2]:
+RETURN: A list consisting of an ideal [1] and an integer [2]:@*
         [1] = saturation of of I by J
         [2] = saturation exponent (= min( k | I:J^k = I:J^(k+1)))
 NOTE: [1] is given by a standard basis in the basering.@*
       - The function proceeds by successively computing ideal quotients.
       The intermediate results will be checked for correctness if # is either empty (not entered)s
-      or if #[1] = 1. Without the checks, the function returns a final result which is correct
+      or if #[1] = 1.
+      Without the checks, the function returns a final result which is correct
       with high probability.
 EXAMPLE: example modSat; shows an example
 "
