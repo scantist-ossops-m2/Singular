@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-version="version modquotient.lib 4.4.0.7 Nov_2024 ";
+version="version modquotient.lib 4.4.0.7 Nov_2024 "; // $Id$
 category="Commutative Algebra";
 info="
 LIBRARY: modquotient.lib   Ideal Quotients and Saturation via Modular Methods
@@ -27,7 +27,6 @@ LIB "triang.lib";
 LIB "absfact.lib";
 LIB "ring.lib";
 LIB "modfinduni.lib";
-LIB "modstd.lib";
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -39,8 +38,9 @@ proc modQuotient(ideal I, ideal J, list #)
 "USAGE:   modQuotient(I, J, #); I, J ideals, # an optional list which is either empty (not entered) or consists of precisely one integer which is 0 or 1.
 ASSUME: The common basering of I and J is defined over the rationals.
 RETURN: The ideal quotient I:J.
-NOTE: The resulting ideal is given by a standard basis in the basering.
-NOTE: The final result will be checked  for correctness if #[1] = 1.
+NOTE: - The resulting ideal is given by a standard basis in the basering.@*
+      - The final result will be checked for correctness if # is either empty (not entered) or if #[1] = 1. Without the check, the functions returns a result which is correct with high probability.
+
 EXAMPLE: example modQuotient; shows an example
 "
 {
@@ -140,7 +140,6 @@ static proc pTest_quotient(string command, list args, ideal result, int p)
            return(0);
        }
    }
-   attrib(Qp,"isSB",1); //avoid warnings
    for (i = ncols(result); i > 0; i--) {
        if (reduce(result[i], Qp, 1) != 0) {
            setring(br);
@@ -226,8 +225,11 @@ ASSUME: The common basering of I and J is defined over the rationals.
 RETURN: A list consisting of an ideal [1] and an integer [2]:
         [1] = saturation of of I by J
         [2] = saturation exponent (= min( k | I:J^k = I:J^(k+1)))
-NOTE: [1] is given by a standard basis in the basering.
-NOTE: The final result will be checked  for correctness if #[1] = 1.
+NOTE: [1] is given by a standard basis in the basering.@*
+      - The function proceeds by successively computing ideal quotients.
+      The intermediate results will be checked for correctness if # is either empty (not entered)s
+      or if #[1] = 1. Without the checks, the function returns a final result which is correct
+      with high probability.
 EXAMPLE: example modSat; shows an example
 "
 {
@@ -242,9 +244,9 @@ EXAMPLE: example modSat; shows an example
    int ii, kk;
    ideal i = I;
    I = modStd(I, exactness);
-   while (ii <= ncols(i)) {
+   while (ii <= size(i)) {
        i = modQuotient(I, J, exactness);
-       for (ii = 1; ii <= ncols(i); ii++) {
+       for (ii = 1; ii <= size(i); ii++) {
            if (reduce(i[ii], I, 1) != 0) break;
        }
        I = modStd(i, exactness);
@@ -261,4 +263,3 @@ example
   list L = modSat(I, J);
   L;
 }
-
