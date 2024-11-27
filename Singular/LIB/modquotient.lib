@@ -27,6 +27,7 @@ LIB "triang.lib";
 LIB "absfact.lib";
 LIB "ring.lib";
 LIB "modfinduni.lib";
+LIB "modstd.lib";
 
 ///////////////////////////////////////////////////////////////////////////////
 //
