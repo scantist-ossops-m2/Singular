@@ -395,6 +395,7 @@ LIB "all.lib";
 * homolog_lib:: procedures for homological algebra
 * integralbasis_lib:: Integral basis in algebraic function fields
 * intprog_lib:: Integer Programming
+* modprimdec_lib:: primary decomposition using modular methods
 * modquotient_lib:: ideal quotient and saturation using modular methods
 * modstd_lib:: Groebner basis of ideals via modular computations
 * modules_lib:: Representations of Modules

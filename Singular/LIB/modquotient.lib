@@ -14,7 +14,7 @@ modQuotient(I,J);  quotient I:J by modular methods
 modSat(I,J);       saturation(I,J) by modular methods
 
 SEE ALSO: modular_lib, parallel_lib
-KEYWORDS: Ideal quotients, saturation
+KEYWORDS: Ideal quotients; saturation
 ";
 
 LIB "general.lib";
