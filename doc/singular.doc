@@ -473,6 +473,10 @@ LIB "all.lib";
 @subsection intprog_lib
 @c lib intprog.lib
 @c ----------------------------------------------------------
+@node modprimdec_lib
+@subsection modprimdec_lib
+@c lib modprimdec.lib
+@c ----------------------------------------------------------
 @node modquotient_lib
 @subsection modquotient_lib
 @c lib modquotient.lib
