@@ -10365,13 +10365,11 @@ static BOOLEAN jjCHINREM_ID(leftv res, leftv u, leftv v)
   }
   else
   {
-    #if 0
     #ifdef HAVE_VSPACE
     int cpus = (long) feOptValue(FE_OPT_CPUS);
     if ((cpus>1) && (rField_is_Q(currRing)))
       result=id_ChineseRemainder_0(x,q,rl,currRing); // deletes also x
     else
-    #endif
     #endif
       result=id_ChineseRemainder(x,q,rl,currRing); // deletes also x
     c->Clean();

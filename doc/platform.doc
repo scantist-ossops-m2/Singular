@@ -21,6 +21,7 @@
 
 @menu
 * News and changes::
+* Parallel computing::
 * Singular 3 and Singular 4::
 * libSingular::
 * Download instructions::
@@ -37,6 +38,14 @@
 @cindex changes
 
 @include NEWS.texi
+
+@c ----------------------------------------------------------
+@node Parallel computing
+@section Parallel computing
+@cindex Parallel computing
+@cindec parallelization
+
+@include parallel.texi
 
 @c ----------------------------------------------------------
 @node Singular 3 and Singular 4

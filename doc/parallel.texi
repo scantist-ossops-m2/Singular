@@ -1,0 +1,48 @@
+@comment -*-texinfo-*-
+@comment this file contains the News about Singular versions
+@comment Unix
+
+@majorheading Parallel computing in SINGULAR
+
+Via modular methods, requires QQ as coefficient field:
+@itemize
+@item assPrimes: @ref{assPrimes}
+@item chinrem: @ref{chinrem}
+@item locNormal: @ref{locNormal}
+@item modNormal: @ref{modNormal}
+@item modPrimdecGTZ" @ref{primdecGTZ}, @ref{modPrimdecGTZ}
+@item modQuotient: @ref{quotient}, @ref{modQuotient}
+@item modSat: @ref{sat}, @ref{modSat}
+@item modStd: @ref{std}, @ref{modStd}
+@item pdf: @ref{pfd}
+@item syModStd: @ref{syModStd}
+@item system("verifyGB",I): @ref{system}
+@item zeroRadical: @ref{zeroRadical}
+@end itemize
+
+Via modular methods, requires ZZ as coefficient domain:
+@itemize
+@item primdecZ: @ref{primdecZ}
+@end itemize
+
+@end itemize
+
+Via modular methods, requires a function field over QQ as coefficient field:
+@itemize
+@item ffmodStd: ref{ffmodStd}
+@end itemize
+
+Via modular methods, requires a algebraic field over QQ as coefficient field:
+@itemize
+@item nfmodStd: @ref{nfmodStd}
+@item nfmodSyz: @ref{nfmodSyz}
+@end itemize
+
+Via different algorithms:
+@itemize
+@item primdec: @ref{primdec}
+@item minAss: @ref{minAss}
+@item signatureNemethi: @ref{signatureNemethi}
+@item watchdog: @ref{watchog}
+@itemize
+

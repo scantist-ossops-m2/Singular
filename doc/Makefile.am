@@ -144,6 +144,7 @@ EXTRA_DIST += 					\
 	memory/OMALLOC.texi			\
 	orbits.gp				\
 	orbitsG25.gp				\
+	parallel.texi				\
 	sample.lib				\
 	sample_lib0.lib				\
 	simple-make				\
