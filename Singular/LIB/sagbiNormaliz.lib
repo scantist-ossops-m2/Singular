@@ -516,6 +516,12 @@ static proc completeSubduction(ideal Q){
         if(change == 0){
             output = "subduced size " + string(size(Q));
             dbprint(our_printlevel,output);
+            def our_ring = basering;
+            if(@do_def_ideal){
+                setring @S;
+                "Size defining ideal so far (not minimized)", size(@DefIdeal);
+                setring our_ring;
+            }
             return(Q);
         }
     }
@@ -595,6 +601,7 @@ static proc Tete_A_TeteHilbControlled(ideal P, int crit_degree, int is_normal)
 
 static proc Tete_A_TeteGeneral(ideal P, int current_degree, int Sagbi_degree_bound, int degreeByDegree, int makeNewTete_a_tete)
 {
+
     int degree_tete_a_tete = -1;
     string output;
     // "Start Tete-a-tete ";
@@ -891,12 +898,17 @@ static proc doSagbiGeneral(ideal Q, int dcefining_ideal, int Sagbi_degree_bound,
         P = Q;
         ideal LC = leadcoafIdeal(P); // must be done before any change of P
         D = degIdeal(P);      // ditto. We need hese data for PreIm
+        for(i = 1; i <=size(D); i++){
+            if(D[i] <= 0){
+                ERROR("constants not allowed in algebra generators");
+            }
+        }
         // "Degrees ", D, " LC ", LC;
         list baseringlist = ringlist(basering);
         int p = ncols(P);
         P = removeConstants(P); // PreIm will be gtaken care below
         P = simplify(P,1); // make monic
-        ring @S = (baseringlist[1]),(y(1.. p)),dp;
+        ring @S = (baseringlist[1]),(y(1.. p)),wp(D);
         ideal @PreIm =(y(1..p));
         ideal @DefIdeal;
         ideal @PreIm_low;
@@ -937,6 +949,7 @@ static proc doSagbiGeneral(ideal Q, int dcefining_ideal, int Sagbi_degree_bound,
     int done;
     int checked;
     int makeNewTete_a_tete = 1;
+    int first_after_maxDegGens = 1;
 
     int uu = minDegreeGens;
     int degreeBoundReached;
@@ -1100,14 +1113,24 @@ static proc doSagbiGeneral(ideal Q, int dcefining_ideal, int Sagbi_degree_bound,
             output = "Degree >= " + string(uu);
             dbprint(our_printlevel, output);
         }
+
         if(degreeByDegree){
-            if(size(P_1) > size(P) && size(Phigh) == 0 || uu == maxDegreeGens){ // we have got new generators
+            makeNewTete_a_tete = 0;
+            if(size(P) != size(P_1)){
                 makeNewTete_a_tete = 1;
             }
             else{
-                makeNewTete_a_tete = 0;
+                if(minDegreeGens < maxDegreeGens){ // in this case we may have P != P_1 despite of equal size
+                    for(i = size(P); i >= 1; i--){
+                        if(P[i] != P_1[i]){
+                            makeNewTete_a_tete = 1;
+                            break;
+                        }
+                    }
+                }
             }
         }
+
         P = P_1 + Phigh;
         our_ring = basering;
         if(@do_def_ideal){

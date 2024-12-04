@@ -26,6 +26,8 @@ New libraries:
 @item @code{arnold.lib}: Classification of isolated singularities with a nondegenerate Newton Boundary (@nref{arnold_lib})
 @item @code{modprimdec.lib}: primary decompisition by modular methods (@nref{modprimdec_lib})
 @item @code{modquotient.lib}: ideal quotient and saturation by modular methods (@nref{modquotient_lib})
+@item @code{sagbiNormaliz.lib}: interface for the computation of Sagbi bases
+(@nref{sagbiNormaliz_lib})
 @item @code{transformation.lib}: The image of a transformation given up to a specified degree (@nref{transformation_lib})
 @end itemize
 
