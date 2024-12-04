@@ -25,8 +25,6 @@ Via modular methods, requires ZZ as coefficient domain:
 @item primdecZ: @ref{primdecZ}
 @end itemize
 
-@end itemize
-
 Via modular methods, requires a function field over QQ as coefficient field:
 @itemize
 @item ffmodStd: ref{ffmodStd}

@@ -43,7 +43,7 @@
 @node Parallel computing
 @section Parallel computing
 @cindex Parallel computing
-@cindec parallelization
+@cindex parallelization
 
 @include parallel.texi
 
