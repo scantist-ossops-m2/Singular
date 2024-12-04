@@ -41,6 +41,6 @@ Via different algorithms:
 @item primdec: @ref{primdec}
 @item minAss: @ref{minAss}
 @item signatureNemethi: @ref{signatureNemethi}
-@item watchdog: @ref{watchog}
+@item watchdog: @ref{watchdog}
 @itemize
 
