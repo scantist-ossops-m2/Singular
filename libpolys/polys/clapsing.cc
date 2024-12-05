@@ -355,7 +355,7 @@ poly singclap_resultant ( poly f, poly g , poly x, const ring r)
     goto resultant_returns_res;
   // for now there is only the possibility to handle polynomials over
   // Q and Fp ...
-  if (rField_is_Zp(r) || rField_is_Q(r)
+  if (rField_is_Zp(r) || rField_is_Q(r) || rField_is_Z(r)
   || (rField_is_Zn(r)&&(r->cf->convSingNFactoryN!=ndConvSingNFactoryN)))
   {
     Variable X(i);
