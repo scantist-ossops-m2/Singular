@@ -752,6 +752,9 @@ static proc dosagbiHilbControlled(ideal Q, intvec HS_num_algebra, intvec HS_deno
     int GradingDenom, standard_crit_degree;
     intvec HilbertBasisKey;
 
+    int @do_def_ideal = 0;
+    export(@do_def_ideal);
+
     ideal P = simplify(Q,15); // make inititial coeff 1, erase 0, duplicates and scalar multiples
     P = completeSubduction(P);
     dbprint(our_printlevel,"Initial subduction dione");
