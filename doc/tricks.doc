@@ -37,8 +37,16 @@
 @item
 the characteristic of a prime field must be less than or equal to 2147483647 (2^31)
 @* (the characteristic of a prime field in the factory routines must be less than 536870912 (2^29))
+(factory is used for @code{factorize}, @code{gcd}, @code{resultant},
+@code{extgcd}, @code{sqrfree}, @code{char_series}, @code{det}, @code{laguerre},
+@code{system("HNF",..)}, @code{system("LLL",..)},@code{system("rref",..)},
+@code{system("absFact",..)}, function fields, polynomial division)
 @* (the characteristic of a prime field in the NTL routines must be less than NTL_SP_BOUND (2^30) on 32bit
 machines - This is always the case since currently, only factory uses NTL.)
+(factory is used for @code{factorize}, @code{gcd}, @code{resultant},
+@code{extgcd}, @code{sqrfree}, @code{char_series}, @code{det}, @code{laguerre},
+@code{system("HNF",..)}, @code{system("LLL",..)},@code{system("rref",..)},
+@code{system("absFact",..)}, function fields, polynomial division)
 @item
 if only NTL is used, extgcd has a limit on the coefficients:
 NTL_MAX_FFTPRIMES
