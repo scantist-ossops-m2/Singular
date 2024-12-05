@@ -1816,7 +1816,7 @@ number singclap_det_bi( bigintmat * m, const coeffs cf)
   return res;
 }
 
-#if defined(HAVE_NTL) || defined(AHVE_FLINT)
+#if defined(HAVE_NTL) || defined(HAVE_FLINT)
 matrix singntl_HNF(matrix  m, const ring s )
 {
   int r=m->rows();
