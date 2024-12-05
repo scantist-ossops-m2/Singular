@@ -10365,12 +10365,14 @@ static BOOLEAN jjCHINREM_ID(leftv res, leftv u, leftv v)
   }
   else
   {
+    /* called in modular.lib::chinrem_recursive: too many proc.
     #ifdef HAVE_VSPACE
     int cpus = (long) feOptValue(FE_OPT_CPUS);
     if ((cpus>1) && (rField_is_Q(currRing)))
       result=id_ChineseRemainder_0(x,q,rl,currRing); // deletes also x
     else
     #endif
+    */
       result=id_ChineseRemainder(x,q,rl,currRing); // deletes also x
     c->Clean();
     if ((return_type==POLY_CMD) &&(result!=NULL))

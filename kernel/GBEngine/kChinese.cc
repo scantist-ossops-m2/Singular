@@ -295,13 +295,22 @@ ideal id_ChineseRemainder_0(ideal *xx, number *q, int rl, const ring r)
       msg.free();
       cnt--;
     }
-    for (int i=0;i<cpus;i++)
+    int i=cpus-1;
+    int done=0;
+    while(done!=cpus)
     {
+      BOOLEAN all_done=TRUE;
       if (pids[i]>0)
       {
         int p=si_waitpid(pids[i],NULL,WNOHANG);
-	if (p>0) pids[i]=0;
+        if (p>0)
+        {
+          pids[i]=0;
+          done++;
+        }
       }
+      if (i==0) i=cpus;
+      i--;
     }
     omFreeSize(pids,cpus*sizeof(int));
     // removes queues
@@ -386,13 +395,22 @@ ideal id_Farey_0(ideal x, number N, const ring r)
       msg.free();
       cnt--;
     }
-    for (int i=0;i<cpus;i++)
+    int i=cpus-1;
+    int done=0;
+    while(done!=cpus)
     {
+      BOOLEAN all_done=TRUE;
       if (pids[i]>0)
       {
         int p=si_waitpid(pids[i],NULL,WNOHANG);
-	if (p>0) pids[i]=0;
+        if (p>0)
+        {
+          pids[i]=0;
+          done++;
+        }
       }
+      if (i==0) i=cpus;
+      i--;
     }
     omFreeSize(pids,cpus*sizeof(int));
     // removes queues
