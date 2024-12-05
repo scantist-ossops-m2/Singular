@@ -262,7 +262,9 @@ void   rWrite(ring r, BOOLEAN details)
   }
   else
     n_CoeffWrite(C, details);
-  PrintLn();
+  if (C->is_field) PrintS(" considered as a field\n");
+  else PrintS(" considered as a non-field\n");
+
 //   {
 //     PrintS("//   characteristic : ");
 //
