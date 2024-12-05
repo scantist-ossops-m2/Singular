@@ -3238,7 +3238,7 @@ static void rOptimizeLDeg(ring r)
      i++;
      if (r->order[i]==0) break;
     }
-    r->pFDeg == p_Totaldegree;
+    r->pFDeg = p_Totaldegree;
   }
 }
 
